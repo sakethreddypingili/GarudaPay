@@ -6,6 +6,7 @@ node_modules/
 .vscode/extensions.
 json
 .vscode/launch.json
+.agents
 .vscode/settings.json
 *.log
 npm-debug.log*
