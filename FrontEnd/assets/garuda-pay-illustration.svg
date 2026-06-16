@@ -1,0 +1,47 @@
+<svg width="720" height="560" viewBox="0 0 720 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="560" rx="32" fill="#F7FAFF"/>
+  <circle cx="560" cy="112" r="86" fill="#E8DDFF"/>
+  <circle cx="132" cy="426" r="96" fill="#D9ECFF"/>
+  <rect x="252" y="52" width="236" height="456" rx="36" fill="#131A35"/>
+  <rect x="270" y="82" width="200" height="392" rx="26" fill="#FFFFFF"/>
+  <rect x="300" y="116" width="140" height="20" rx="10" fill="#E7EDFF"/>
+  <rect x="302" y="164" width="136" height="82" rx="18" fill="url(#cardGradient)"/>
+  <circle cx="330" cy="195" r="17" fill="#FFFFFF" fill-opacity="0.3"/>
+  <rect x="324" y="222" width="74" height="10" rx="5" fill="#FFFFFF" fill-opacity="0.75"/>
+  <rect x="302" y="272" width="136" height="46" rx="14" fill="#F1F6FF"/>
+  <circle cx="324" cy="295" r="12" fill="#2563EB"/>
+  <rect x="346" y="286" width="66" height="8" rx="4" fill="#273152"/>
+  <rect x="346" y="301" width="42" height="7" rx="3.5" fill="#7C89B6"/>
+  <rect x="302" y="334" width="136" height="46" rx="14" fill="#F6F1FF"/>
+  <circle cx="324" cy="357" r="12" fill="#7C3AED"/>
+  <rect x="346" y="348" width="72" height="8" rx="4" fill="#273152"/>
+  <rect x="346" y="363" width="48" height="7" rx="3.5" fill="#7C89B6"/>
+  <rect x="322" y="416" width="96" height="34" rx="17" fill="#2563EB"/>
+  <path d="M358 433L367 442L384 422" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="96" y="168" width="180" height="74" rx="20" fill="#FFFFFF" filter="url(#shadow)"/>
+  <circle cx="132" cy="205" r="18" fill="#2563EB"/>
+  <path d="M124 205L130 211L141 198" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="162" y="190" width="78" height="9" rx="4.5" fill="#273152"/>
+  <rect x="162" y="207" width="54" height="8" rx="4" fill="#7C89B6"/>
+  <rect x="458" y="316" width="176" height="76" rx="20" fill="#FFFFFF" filter="url(#shadow)"/>
+  <circle cx="494" cy="354" r="18" fill="#7C3AED"/>
+  <path d="M494 344V364M484 354H504" stroke="white" stroke-width="5" stroke-linecap="round"/>
+  <rect x="524" y="339" width="76" height="9" rx="4.5" fill="#273152"/>
+  <rect x="524" y="356" width="48" height="8" rx="4" fill="#7C89B6"/>
+  <defs>
+    <linearGradient id="cardGradient" x1="302" y1="164" x2="438" y2="246" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+    <filter id="shadow" x="76" y="148" width="578" height="264" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="10"/>
+      <feGaussianBlur stdDeviation="10"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.098 0 0 0 0 0.145 0 0 0 0 0.294 0 0 0 0.14 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_2"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_2" result="shape"/>
+    </filter>
+  </defs>
+</svg>
