@@ -38,13 +38,17 @@ const sendWelcomeEmail = async ({ to, name }) => {
 }
 
 // Creating password reset mail function
-const sendPasswordResetEmail = async ({ to, name, resetUrl }) => {
+const sendPasswordResetEmail = async ({ to, name, resetUrl, token }) => {
     const html = `
         <div style="font-family: Arial; max-width: 500px;">
             <h2 style="color: #0E4AA6;">Reset Your Password</h2>
             <p>Hi ${name},</p>
             <p>You requested to reset your GarudaPay password.</p>
-            <p>Click the button below — this link expires in <strong>15 minutes</strong>.</p>
+            <p>Here is your reset token (use it in the <strong>x-reset-token</strong> header):</p>
+            <div style="background: #f4f4f4; padding: 12px; font-family: monospace; font-size: 14px; word-break: break-all; border-radius: 4px; margin: 10px 0;">
+                ${token}
+            </div>
+            <p>Or click the button below — this link expires in <strong>15 minutes</strong>.</p>
             <a href="${resetUrl}"
                style="display: inline-block; margin: 16px 0; padding: 12px 28px;
                       background: #0E4AA6; color: #fff; text-decoration: none;

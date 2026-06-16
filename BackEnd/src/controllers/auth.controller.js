@@ -226,11 +226,21 @@ const forgotPassword = async (req, res) => {
         // building the plain token
         const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${plainToken}`;
 
-        await sendPasswordResetEmail({
-            to: user.email,
-            name: user.name,
-            resetUrl
-        })
+        try {
+            await sendPasswordResetEmail({
+                to: user.email,
+                name: user.name,
+                resetUrl,
+                token: plainToken
+            });
+        } catch (emailError) {
+            console.error("Email sending failed:", emailError);
+            return res.status(500).json({
+                success: false,
+                message: `Failed to send email: ${emailError.message}`,
+                resetUrl: resetUrl
+            });
+        }
 
         res.json(genericResponse);
 
@@ -246,8 +256,15 @@ const forgotPassword = async (req, res) => {
 const resetPassword = async (req, res) => {
     try {
 
-        const { token } = req.params;
+        const token = req.headers['x-reset-token'] || req.headers['authorization'] || req.headers['token'];
         const { password } = req.body;
+
+        if (!token) {
+            return res.status(400).json({
+                success: false,
+                message: "Reset token is required in headers (e.g. 'x-reset-token')"
+            });
+        }
 
         if (!password) {
             return res.status(400).json({
