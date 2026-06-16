@@ -3,6 +3,12 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./src/config/db');
 const walletRoutes = require('./src/routes/wallet.routes');
+const path = require("path");
+
+
+const contactRoutes = require("./routes/contactRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 const app = express();
 
@@ -15,6 +21,9 @@ app.use(express.json());
 
 // Routes
 app.use('/api/wallet', walletRoutes);
+app.use("/api/contact", contactRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -25,6 +34,10 @@ app.get('/health', (req, res) => {
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: 'Something went wrong on the server' });
+});
+
+app.get("/", function (req, res) {
+    res.sendFile(path.join(__dirname, "../frontend/landing.html"));
 });
 
 const PORT = process.env.PORT || 5000;
