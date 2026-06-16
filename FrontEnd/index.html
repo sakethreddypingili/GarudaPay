@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GarudaPay Wallet</title>
+    <!-- Fonts: Outfit and Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/css/style.css">
+</head>
+<body>
+
+    <!-- Simple Navigation Header -->
+    <header class="header">
+        <div class="logo">GarudaPay</div>
+        <div>
+            <button class="nav-btn" id="toDashboardBtn">My Wallet</button>
+            <button class="nav-btn" id="toTopUpBtn">Add Money</button>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- 1. WALLET DASHBOARD VIEW -->
+        <div id="dashboardView" class="view active">
+            
+            <!-- Balance Card -->
+            <div class="card">
+                <div class="balance-title">Wallet Balance</div>
+                <div class="balance-amount" id="balanceText">₹0.00</div>
+                <button class="nav-btn" id="quickAddBtn">+ Top-Up Money</button>
+            </div>
+
+            <!-- Transaction History Card -->
+            <div class="card">
+                <h3>Recent Transactions</h3>
+                <div id="transactionsList">
+                    <!-- Loaded dynamically via simple JavaScript -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 2. ADD MONEY / TOP-UP VIEW -->
+        <div id="topupView" class="view">
+            
+            <div class="card">
+                <h3>Add Money to Wallet</h3>
+                
+                <!-- Input Form -->
+                <div id="topupFormContainer">
+                    <form id="topupForm">
+                        <div class="form-group">
+                            <label class="form-label" for="amountInput">Enter Amount (INR)</label>
+                            <input type="number" id="amountInput" class="form-input" value="1000" min="10" required>
+                            
+                            <div class="presets-container">
+                                <button type="button" class="preset-btn" data-val="500">+₹500</button>
+                                <button type="button" class="preset-btn" data-val="1000">+₹1,000</button>
+                                <button type="button" class="preset-btn" data-val="2000">+₹2,000</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="methodSelect">Choose Payment Method</label>
+                            <select id="methodSelect" class="form-input">
+                                <option value="HDFC Bank">HDFC Bank Account</option>
+                                <option value="UPI NetBanking">BHIM UPI ID</option>
+                                <option value="Debit Card">Debit / Credit Card</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="nav-btn" style="width: 100%; padding: 12px;">Add Funds Now</button>
+                    </form>
+                </div>
+
+                <!-- Simple Spinner/Loading State -->
+                <div id="loadingState" class="view">
+                    <div class="loading-indicator">Processing transaction. Please wait...</div>
+                </div>
+
+                <!-- Success Screen with Receipt -->
+                <div id="successState" class="view">
+                    <div class="success-message">
+                        <h4>Top-Up Successful!</h4>
+                        <p>Your wallet balance has been updated.</p>
+                    </div>
+
+                    <div class="receipt">
+                        <div class="receipt-row">
+                            <span>Transaction ID:</span>
+                            <span id="receiptTxId"></span>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Amount Added:</span>
+                            <span id="receiptAmount"></span>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Payment Method:</span>
+                            <span id="receiptMethod"></span>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Date:</span>
+                            <span id="receiptDate"></span>
+                        </div>
+                    </div>
+
+                    <button class="nav-btn" id="finishBtn" style="width: 100%;">Done</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="./src/js/app.js"></script>
+</body>
+</html>

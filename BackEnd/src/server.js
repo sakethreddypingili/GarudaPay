@@ -12,6 +12,9 @@ const { connectDB } = require("./config/db");
 
 const app = express();
 
+const cors = require("cors");
+app.use(cors({ origin: true, credentials: true }));
+
 // Runs this function before the every incoming requests from the express function object
 app.use(express.json()); // Parses string to JS object
 app.use(cookieParser()); // Reads JWT Tokens that comes as a cookie
