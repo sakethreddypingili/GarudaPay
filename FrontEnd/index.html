@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GarudaPay Wallet</title>
+    <!-- Fonts: Outfit and Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/css/style.css">
+</head>
+<body>
+
+    <!-- Simple Navigation Header -->
+    <header class="header">
+        <div class="logo">GarudaPay</div>
+        <div id="navGuest" style="display: none;">
+            <button class="nav-btn" id="toLoginBtn">Login</button>
+            <button class="nav-btn" id="toRegisterBtn">Register</button>
+        </div>
+        <div id="navUser" style="display: none;">
+            <button class="nav-btn" id="toDashboardBtn">My Wallet</button>
+            <button class="nav-btn" id="toTopUpBtn">Add Money</button>
+            <button class="nav-btn" id="toHistoryBtn">Transactions</button>
+            <button class="nav-btn" id="logoutBtn">Logout</button>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- 1. WALLET DASHBOARD VIEW -->
+        <div id="dashboardView" class="view">
+            
+            <!-- Balance Card -->
+            <div class="card">
+                <div class="balance-title">Wallet Balance</div>
+                <div class="balance-amount" id="balanceText">₹0.00</div>
+                <button class="nav-btn" id="quickAddBtn">+ Top-Up Money</button>
+            </div>
+
+            <!-- Transaction History Card -->
+            <div class="card">
+                <h3>Recent Transactions</h3>
+                <div id="transactionsList">
+                    <!-- Loaded dynamically via simple JavaScript -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 2. ADD MONEY / TOP-UP VIEW -->
+        <div id="topupView" class="view">
+            
+            <div class="card">
+                <h3>Add Money to Wallet</h3>
+                
+                <!-- Input Form -->
+                <div id="topupFormContainer">
+                    <form id="topupForm">
+                        <div class="form-group">
+                            <label class="form-label" for="amountInput">Enter Amount (INR)</label>
+                            <input type="number" id="amountInput" class="form-input" value="1000" min="10" required>
+                            
+                            <div class="presets-container">
+                                <button type="button" class="preset-btn" data-val="500">+₹500</button>
+                                <button type="button" class="preset-btn" data-val="1000">+₹1,000</button>
+                                <button type="button" class="preset-btn" data-val="2000">+₹2,000</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="methodSelect">Choose Payment Method</label>
+                            <select id="methodSelect" class="form-input">
+                                <option value="HDFC Bank">HDFC Bank Account</option>
+                                <option value="UPI NetBanking">BHIM UPI ID</option>
+                                <option value="Debit Card">Debit / Credit Card</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="nav-btn" style="width: 100%; padding: 12px;">Add Funds Now</button>
+                    </form>
+                </div>
+
+                <!-- Simple Spinner/Loading State -->
+                <div id="loadingState" class="view">
+                    <div class="loading-indicator">Processing transaction. Please wait...</div>
+                </div>
+
+                <!-- Success Screen with Receipt -->
+                <div id="successState" class="view">
+                    <div class="success-message">
+                        <h4>Top-Up Successful!</h4>
+                        <p>Your wallet balance has been updated.</p>
+                    </div>
+
+                    <div class="receipt">
+                        <div class="receipt-row">
+                            <span>Transaction ID:</span>
+                            <span id="receiptTxId"></span>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Amount Added:</span>
+                            <span id="receiptAmount"></span>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Payment Method:</span>
+                            <span id="receiptMethod"></span>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Date:</span>
+                            <span id="receiptDate"></span>
+                        </div>
+                    </div>
+
+                    <button class="nav-btn" id="finishBtn" style="width: 100%;">Done</button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- LOGIN VIEW -->
+        <div id="loginView" class="view">
+            <div class="card">
+                <h3>Welcome Back</h3>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" class="form-input" placeholder="Enter your email" required autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="nav-btn" style="width: 100%; padding: 12px; margin-left: 0;">Sign In</button>
+                </form>
+                <div style="margin-top: 16px; text-align: center; font-size: 14px;">
+                    <a href="#" id="linkForgotPassword" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Forgot Password?</a>
+                </div>
+                <div style="margin-top: 12px; text-align: center; font-size: 14px; color: var(--text-secondary);">
+                    Don't have an account? <a href="#" id="linkRegister" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Register here</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- REGISTER VIEW -->
+        <div id="registerView" class="view">
+            <div class="card">
+                <h3>Create Account</h3>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label" for="registerName">Full Name</label>
+                        <input type="text" id="registerName" class="form-input" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="registerEmail">Email Address</label>
+                        <input type="email" id="registerEmail" class="form-input" placeholder="Enter your email" required autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" class="form-input" placeholder="Must be at least 6 characters" minlength="6" required autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="nav-btn" style="width: 100%; padding: 12px; margin-left: 0;">Sign Up</button>
+                </form>
+                <div style="margin-top: 16px; text-align: center; font-size: 14px; color: var(--text-secondary);">
+                    Already have an account? <a href="#" id="linkLogin" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Sign in here</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORGOT PASSWORD VIEW -->
+        <div id="forgotPasswordView" class="view">
+            <div class="card">
+                <h3>Recover Account</h3>
+                <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">
+                    Enter your email address and we'll generate a password reset link for you.
+                </p>
+                <form id="forgotPasswordForm">
+                    <div class="form-group">
+                        <label class="form-label" for="forgotEmail">Email Address</label>
+                        <input type="email" id="forgotEmail" class="form-input" placeholder="Enter your email" required>
+                    </div>
+                    <button type="submit" class="nav-btn" style="width: 100%; padding: 12px; margin-left: 0;">Send Reset Link</button>
+                </form>
+                
+                <div id="forgotPasswordDebugContainer" style="display: none; margin-top: 20px; padding: 12px; background: rgba(27, 58, 106, 0.05); border-radius: 8px; font-size: 13px; border: 1px dashed var(--brand-primary);">
+                    <strong>Development Note:</strong> Email sending failed or bypassed. You can use the generated reset link below:
+                    <div style="margin-top: 6px; word-break: break-all;"><a href="#" id="forgotPasswordDebugLink" style="color: var(--brand-primary); font-weight: 600; text-decoration: underline;"></a></div>
+                </div>
+
+                <div style="margin-top: 20px; text-align: center; font-size: 14px;">
+                    <a href="#" id="linkBackToLogin1" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Back to Login</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESET PASSWORD VIEW -->
+        <div id="resetPasswordView" class="view">
+            <div class="card">
+                <h3>Set New Password</h3>
+                <form id="resetPasswordForm">
+                    <div class="form-group">
+                        <label class="form-label" for="resetToken">Reset Token</label>
+                        <input type="text" id="resetToken" class="form-input" placeholder="Paste the token from email/console" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="resetPassword">New Password</label>
+                        <input type="password" id="resetPassword" class="form-input" placeholder="Must be at least 6 characters" minlength="6" required autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="nav-btn" style="width: 100%; padding: 12px; margin-left: 0;">Update Password</button>
+                </form>
+                <div style="margin-top: 20px; text-align: center; font-size: 14px;">
+                    <a href="#" id="linkBackToLogin2" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Back to Login</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANSACTION HISTORY VIEW -->
+        <div id="transactionHistoryView" class="view">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 0;">Transactions History</h3>
+                    <button class="nav-btn" id="exportCsvBtn" style="margin-left: 0;">Export CSV</button>
+                </div>
+
+                <!-- Filters & Search Toolbar -->
+                <div class="filters-toolbar">
+                    <div class="search-box">
+                        <input type="text" id="searchDescInput" class="form-input" placeholder="Search description...">
+                    </div>
+                    <div class="filter-row">
+                        <div>
+                            <label class="filter-label">Type</label>
+                            <select id="filterType" class="form-input filter-select">
+                                <option value="">All Types</option>
+                                <option value="credit">Credits (+)</option>
+                                <option value="debit">Debits (-)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="filter-label">Status</label>
+                            <select id="filterStatus" class="form-input filter-select">
+                                <option value="">All Statuses</option>
+                                <option value="completed">Completed</option>
+                                <option value="pending">Pending</option>
+                                <option value="failed">Failed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-row">
+                        <div>
+                            <label class="filter-label">From Date</label>
+                            <input type="date" id="filterFromDate" class="form-input">
+                        </div>
+                        <div>
+                            <label class="filter-label">To Date</label>
+                            <input type="date" id="filterToDate" class="form-input">
+                        </div>
+                    </div>
+                    <button type="button" class="preset-btn" id="clearFiltersBtn" style="width: 100%; margin-top: 8px;">Clear Filters</button>
+                </div>
+
+                <!-- Detailed Transactions Table/List -->
+                <div id="detailedTransactionsList" style="margin-top: 20px;">
+                    <!-- Loaded dynamically -->
+                </div>
+
+                <!-- Pagination controls -->
+                <div class="pagination-container" style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                    <button class="preset-btn" id="prevPageBtn" disabled>&larr; Prev</button>
+                    <span id="pageIndicator" style="font-size: 14px; font-weight: 600; color: var(--text-secondary);">Page 1 of 1</span>
+                    <button class="preset-btn" id="nextPageBtn" disabled>Next &rarr;</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TRANSACTION DETAILS MODAL -->
+    <div id="txDetailsModal" class="modal-overlay">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
+                <h3 style="margin-bottom: 0;">Transaction Details</h3>
+                <span id="closeTxModalBtn" class="close-modal-btn">&times;</span>
+            </div>
+            
+            <div class="modal-details-grid">
+                <div class="detail-row">
+                    <span class="detail-label">Reference ID:</span>
+                    <span id="detRefId" class="detail-val"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span id="detStatus" class="detail-val"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Date & Time:</span>
+                    <span id="detDate" class="detail-val"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Type:</span>
+                    <span id="detType" class="detail-val"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Amount:</span>
+                    <span id="detAmount" class="detail-val"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Sender:</span>
+                    <span id="detSender" class="detail-val"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Receiver:</span>
+                    <span id="detReceiver" class="detail-val"></span>
+                </div>
+                <div class="detail-row" style="grid-column: span 2;">
+                    <span class="detail-label">Description:</span>
+                    <span id="detDescription" class="detail-val"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./src/js/app.js"></script>
+</body>
+</html>
