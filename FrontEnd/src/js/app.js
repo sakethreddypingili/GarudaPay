@@ -28,6 +28,9 @@ const forgotPasswordView = document.getElementById('forgotPasswordView');
 const resetPasswordView = document.getElementById('resetPasswordView');
 const transactionHistoryView = document.getElementById('transactionHistoryView');
 const txDetailsModal = document.getElementById('txDetailsModal');
+// Views
+const dashboardView = document.getElementById('dashboardView');
+const topupView = document.getElementById('topupView');
 
 // Tabs/Buttons
 const toDashboardBtn = document.getElementById('toDashboardBtn');
@@ -138,11 +141,15 @@ function hideAllViews() {
 function showDashboard() {
     hideAllViews();
     dashboardView.classList.add('active');
+function showDashboard() {
+    dashboardView.classList.add('active');
+    topupView.classList.remove('active');
     fetchWalletState();
 }
 
 function showTopUp() {
     hideAllViews();
+    dashboardView.classList.remove('active');
     topupView.classList.add('active');
     
     // Reset Top-up form status
@@ -171,6 +178,7 @@ function renderUI() {
         
         transactionsList.innerHTML += `
             <div class="list-item txn-row" onclick="openTxDetails('${tx.transactionId}')">
+            <div class="list-item">
                 <div>
                     <strong>${tx.title}</strong>
                     <br><small style="color: #888;">${tx.date}</small>
@@ -730,3 +738,6 @@ txDetailsModal.addEventListener('click', (e) => {
 
 // Boot the application
 checkSession();
+// Boot the application
+fetchWalletState();
+showDashboard();
