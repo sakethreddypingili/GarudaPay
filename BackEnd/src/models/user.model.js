@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-// creating schema for db
+// creating schema for storing user data in db
 const userSchema = new mongoose.Schema(
     {
         name: {

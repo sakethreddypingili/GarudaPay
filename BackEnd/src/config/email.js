@@ -97,6 +97,7 @@ const sendTransactionEmail = async ({ to, name, type, amount, balance }) => {
         </div>
     `;
 
+    // sending mail to the user
     await transporter.sendMail({
         from: process.env.EMAIL_USER,
         to,

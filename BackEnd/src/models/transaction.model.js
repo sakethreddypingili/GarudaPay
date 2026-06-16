@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// creating schema for storing transaction data in the db
 const transactionSchema = new mongoose.Schema(
     {
         sender: {

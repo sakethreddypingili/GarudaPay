@@ -158,8 +158,10 @@ const logout = (req, res) => {
 
 const getMe = async (req, res) => {
     try {
+        // searching for user using userId in the db.
         const user = await User.findById(req.user.id);
 
+        // if the user is not present then it will send a false message
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -167,6 +169,7 @@ const getMe = async (req, res) => {
             });
         }
 
+        // if nothing fails user object will be fetched from db
         res.json({
             success: true,
             user: {
@@ -178,6 +181,7 @@ const getMe = async (req, res) => {
             }
         })
     } catch (e) {
+        // if any unwanted error comes then it will catch it
         res.status(500).json({
             success: false,
             message: e.message
@@ -188,8 +192,10 @@ const getMe = async (req, res) => {
 
 const forgotPassword = async (req, res) => {
     try {
+        // getting user email from the provided object body by the client
         const { email } = req.body;
 
+        // If email is not provided by the client, then negative response will be send
         if (!email) {
             return res.status(400).json({
                 success: false,
@@ -197,8 +203,10 @@ const forgotPassword = async (req, res) => {
             });
         }
 
+        // finding if user email is present in the db
         const user = await User.findOne({ email });
 
+        // creating a generic response for the user, if everything goes will
         const genericResponse = {
             success: true,
             message: "If an account with that email exist. a reset link will be sent."
@@ -207,6 +215,7 @@ const forgotPassword = async (req, res) => {
         if (!user) {
             return res.json(genericResponse);
         }
+
         // Generate a secure random token, and goes into email url
         const plainToken = crypto.randomBytes(32).toString("hex");
 
@@ -226,6 +235,12 @@ const forgotPassword = async (req, res) => {
         // building the plain token
         const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${plainToken}`;
 
+        // if everything wents well then email will be sent whose logic is written in src/config/email.js
+        await sendPasswordResetEmail({
+            to: user.email,
+            name: user.name,
+            resetUrl
+        })
         try {
             await sendPasswordResetEmail({
                 to: user.email,
@@ -242,9 +257,11 @@ const forgotPassword = async (req, res) => {
             });
         }
 
+        // finally send the response to user that email has been sent
         res.json(genericResponse);
 
     } catch (e) {
+        // if any unwanted error comes then it will catch it
         res.status(500).json({
             success: false,
             message: e.message
@@ -255,6 +272,11 @@ const forgotPassword = async (req, res) => {
 
 const resetPassword = async (req, res) => {
     try {
+        // this is the token that will be read from the plain token from the resetUrl
+        const { token } = req.params;
+        const { password } = req.body;
+
+        // If new password is nor provided by the user
 
         const token = req.headers['x-reset-token'] || req.headers['authorization'] || req.headers['token'];
         const { password } = req.body;
@@ -273,6 +295,7 @@ const resetPassword = async (req, res) => {
             });
         }
 
+        // password length must be greater than 6 chars
         if (password.length < 6) {
             return res.status(400).json({
                 success: false,
