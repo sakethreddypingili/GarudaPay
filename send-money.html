@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="./node_modules/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Garuda Pay - Send Money</title>
+</head>
+<body>
+
+    <header class="navbar-custom d-flex justify-content-between align-items-center">
+        <div class="logo-brand">Garuda Pay</div>
+        <nav class="nav-options">
+            <a href="#">Dashboard</a>
+            <a href="#" class="active">Send Money</a>
+            <a href="#">History</a>
+            <a href="#">Profile</a>
+        </nav>
+        <div class="profile-actions d-flex align-items-center"> 
+            <i class="bi bi-bell text-muted me-3 fs-5"></i>
+            <i class="bi bi-person-circle fs-4 brand-color"></i>
+        </div>
+    </header>
+
+    <main class="app-container">
+        
+        <div class="main-display d-flex justify-content-between align-items-start mb-4">
+            <div class="display-title">
+                <h1>Send Money</h1>
+                <p class="text-muted">Transfer money to any user instantly and securely.</p>
+            </div>
+            <div class="balance-card text-end">
+                <span class="balance-label">Wallet Balance</span>
+                <div class="balance-amount">₹00.00</div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <form class="transaction-form">
+                
+                <div class="input-group-wrapper">
+                    <label for="upiid" class="form-label">Receiver UPI ID / Email</label>
+                    <div class="input-field-container">
+                        <i class="bi bi-person field-icon"></i>
+                        <input type="text" name="upiid" id="upiid" placeholder="Enter receiver's UPI ID or email">
+                    </div>
+                    <span class="field-instruction">Make sure the identifier is exact and correct</span>
+                </div>
+                    
+                <div class="input-group-wrapper">
+                    <label for="amount" class="form-label">Amount (₹)</label>
+                    <div class="input-field-container">
+                        <i class="bi bi-currency-rupee field-icon"></i>
+                        <input type="number" name="amount" id="amount" placeholder="Enter amount">
+                    </div>
+                    <span class="field-instruction">Minimum transfer amount is ₹1</span>
+                </div>
+
+                <div class="input-group-wrapper">
+                    <label for="note" class="form-label">Note (Optional)</label>
+                    <div class="input-field-container">
+                        <i class="bi bi-card-text field-icon"></i>
+                        <input type="text" name="note" id="note" placeholder="Add a note (e.g., Lunch, Rent)">
+                    </div>
+                </div>
+
+                <div class="secure-badge d-flex align-items-center">
+                    <i class="bi bi-shield-check me-2 fs-5"></i>
+                    <div>
+                        <strong>Secure Transfer</strong>
+                        <p class="mb-0 text-muted">Your money is protected with 256-bit encryption protocols.</p>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit-payment">
+                    <i class="bi bi-send me-2"></i> Send Money
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="footer-signature text-center">
+        <div class="d-flex justify-content-center align-items-center text-muted gap-2">
+            <i class="bi bi-shield-lock-fill brand-color"></i>
+            <span>Safe. Secure. Instant. Your trust is our absolute priority.</span>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

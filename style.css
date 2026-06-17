@@ -1,0 +1,180 @@
+:root {
+    --brand-primary: #1b3a6a;
+    --brand-hover: #12284c;
+    --bg-light: #f4f7fc;
+    --card-bg: #ffffff;
+    --text-main: #333333;
+    --border-color: #e2e8f0;
+}
+
+body {
+    background-color: var(--bg-light);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--text-main);
+    margin: 0;
+    padding-bottom: 60px; 
+}
+
+.brand-color {
+    color: var(--brand-primary);
+}
+
+.navbar-custom {
+    background-color: var(--card-bg);
+    padding: 1rem 4rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo-brand {
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--brand-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.nav-options a {
+    text-decoration: none;
+    color: #6c757d;
+    margin: 0 15px;
+    font-weight: 500;
+    padding-bottom: 18px;
+    transition: color 0.2s ease;
+}
+
+.nav-options a:hover, 
+.nav-options a.active {
+    color: var(--brand-primary);
+    border-bottom: 3px solid var(--brand-primary);
+}
+
+.app-container {
+    max-width: 650px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.display-title h1 {
+    font-weight: 700;
+    color: var(--brand-primary);
+    font-size: 2rem;
+    margin-bottom: 4px;
+}
+
+.balance-card {
+    background-color: #eef3fb;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid #d3e1f5;
+}
+
+.balance-label {
+    font-size: 0.75rem;
+    color: #5c6f84;
+    text-transform: uppercase;
+    font-weight: 600;
+    display: block;
+}
+
+.balance-amount {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--brand-primary);
+}
+
+.form-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(27, 58, 106, 0.03);
+    border: 1px solid var(--border-color);
+}
+
+.input-group-wrapper {
+    margin-bottom: 22px;
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #4a5568;
+    margin-bottom: 6px;
+}
+
+.input-field-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.field-icon {
+    position: absolute;
+    left: 15px;
+    color: #a0aec0;
+    font-size: 1.15rem;
+}
+
+.input-field-container input {
+    width: 100%;
+    padding: 12px 12px 12px 45px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.input-field-container input:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(27, 58, 106, 0.15);
+}
+
+.field-instruction {
+    font-size: 0.78rem;
+    color: #718096;
+    display: block;
+    margin-top: 4px;
+}
+
+.secure-badge {
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 25px;
+    color: var(--brand-primary);
+}
+
+.secure-badge p {
+    font-size: 0.82rem;
+}
+
+.btn-submit-payment {
+    width: 100%;
+    background-color: var(--brand-primary);
+    color: #ffffff;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+.btn-submit-payment:hover {
+    background-color: var(--brand-hover);
+}
+
+.footer-signature {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--bg-light);
+    padding: 15px 0;
+    font-size: 0.85rem;
+}
