@@ -7,8 +7,11 @@ require("dotenv").config();
 const authRoutes = require("./routes/auth.routes");
 const transactionRoutes = require("./routes/transaction.routes");
 const walletRoutes = require("./routes/wallet.routes");
+const contactRoutes = require("./routes/contact.routes");
+const dashboardRoutes = require("./routes/dashboard.routes");
+const notificationRoutes = require("./routes/notification.routes");
 const { connectDB } = require("./config/db");
-
+const path = require("path");
 
 const app = express();
 
@@ -22,7 +25,17 @@ app.use(cookieParser()); // Reads JWT Tokens that comes as a cookie
 app.use("/api/auth", authRoutes); // Any request starts with /api/auth goes to authRoutes file
 app.use("/api/transaction", transactionRoutes);
 app.use("/api/wallet", walletRoutes);
+app.use("/api/contact", contactRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/notifications", notificationRoutes);
 
+// Root route serves landing page
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../FrontEnd/landing.html"));
+});
+
+// Serve FrontEnd static files
+app.use(express.static(path.join(__dirname, "../../FrontEnd")));
 
 // If any routes does not matches as per the request then this will run
 app.use((req, res) => {
@@ -32,7 +45,7 @@ app.use((req, res) => {
     })
 })
 
-const PORT = process.env.PORT || 7000;
+const PORT = process.env.PORT || 5055;
 
 // As this function will return a Promise. we will use async and await
 async function start() {
@@ -42,9 +55,9 @@ async function start() {
         console.log("Mongoose connected successfully");
 
         app.listen(PORT, () => {
-            // listen starts accepting request on PORT = process.env.PORT || 7000;
+            // listen starts accepting request on PORT = process.env.PORT || 5055;
             // this callback function runs when app is listenting to PORT
-            console.log(`Server is listening on https://localhost:${PORT}`);
+            console.log(`Server is listening on http://localhost:${PORT}`);
         })
     } catch (e) {
         // If Promise of the connectDB() method rejects that error is catched here.

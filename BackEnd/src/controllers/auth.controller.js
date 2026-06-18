@@ -11,7 +11,7 @@ const issueTokenCookie = (res, userId) => {
     // Creates the token, storing the user's id so we can identify them later
     const token = jwt.sign(
         { id: userId },
-        process.env.JWT_SECRET,
+        process.env.JWT_SECRET || "garudapay_secret_key_123",
         { expiresIn: "7d" }
     );
 
@@ -177,6 +177,7 @@ const getMe = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 balance: user.balance,
+                preferences: user.preferences,
                 createdAt: user.createdAt
             }
         })
@@ -236,11 +237,6 @@ const forgotPassword = async (req, res) => {
         const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${plainToken}`;
 
         // if everything wents well then email will be sent whose logic is written in src/config/email.js
-        await sendPasswordResetEmail({
-            to: user.email,
-            name: user.name,
-            resetUrl
-        })
         try {
             await sendPasswordResetEmail({
                 to: user.email,
@@ -272,13 +268,8 @@ const forgotPassword = async (req, res) => {
 
 const resetPassword = async (req, res) => {
     try {
-        // this is the token that will be read from the plain token from the resetUrl
-        const { token } = req.params;
-        const { password } = req.body;
-
-        // If new password is nor provided by the user
-
-        const token = req.headers['x-reset-token'] || req.headers['authorization'] || req.headers['token'];
+        // this is the token that will be read from the plain token from the resetUrl or headers
+        const token = req.params.token || req.headers['x-reset-token'] || req.headers['authorization'] || req.headers['token'];
         const { password } = req.body;
 
         if (!token) {
@@ -339,4 +330,143 @@ const resetPassword = async (req, res) => {
     }
 }
 
-module.exports = { register, login, logout, getMe, forgotPassword, resetPassword }
+const updateProfile = async (req, res) => {
+    try {
+        const { name, email } = req.body;
+        if (!name || !email) {
+            return res.status(400).json({
+                success: false,
+                message: "Name and email are required"
+            });
+        }
+
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        if (email.toLowerCase() !== user.email.toLowerCase()) {
+            const emailExists = await User.findOne({ email: email.toLowerCase() });
+            if (emailExists) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Email is already in use by another account"
+                });
+            }
+        }
+
+        user.name = name;
+        user.email = email;
+        await user.save();
+
+        res.json({
+            success: true,
+            message: "Profile updated successfully",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                balance: user.balance,
+                preferences: user.preferences
+            }
+        });
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
+    }
+};
+
+const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "Current password and new password are required"
+            });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: "New password must be at least 6 characters"
+            });
+        }
+
+        const user = await User.findById(req.user.id).select("+password");
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        const isMatch = await user.isPasswordCorrect(currentPassword);
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Incorrect current password"
+            });
+        }
+
+        user.password = newPassword;
+        await user.save();
+
+        res.json({
+            success: true,
+            message: "Password changed successfully"
+        });
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
+    }
+};
+
+const updatePreferences = async (req, res) => {
+    try {
+        const { theme, notificationsEnabled, currency } = req.body;
+
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        if (user.preferences) {
+            if (theme !== undefined) user.preferences.theme = theme;
+            if (notificationsEnabled !== undefined) user.preferences.notificationsEnabled = notificationsEnabled;
+            if (currency !== undefined) user.preferences.currency = currency;
+        } else {
+            user.preferences = {
+                theme: theme || "light",
+                notificationsEnabled: notificationsEnabled !== undefined ? notificationsEnabled : true,
+                currency: currency || "INR"
+            };
+        }
+
+        await user.save();
+
+        res.json({
+            success: true,
+            message: "Preferences updated successfully",
+            preferences: user.preferences
+        });
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
+    }
+};
+
+module.exports = { 
+    register, 
+    login, 
+    logout, 
+    getMe, 
+    forgotPassword, 
+    resetPassword,
+    updateProfile,
+    changePassword,
+    updatePreferences
+}

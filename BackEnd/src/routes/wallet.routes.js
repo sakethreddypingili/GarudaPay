@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { topUp } = require("../controllers/wallet.controller");
-
-router.post("/topup", topUp);
 const walletController = require('../controllers/wallet.controller');
+const verifyToken = require("../middleware/auth.middleware");
+
+router.use(verifyToken.optional);
 
 router.get('/user', walletController.getOrCreateUser);
 router.get('/balance', walletController.getWalletBalance);

@@ -21,9 +21,24 @@ const userSchema = new mongoose.Schema(
             required: [true, "Password is required"],
             select: false
         },
-        balance: {
+                balance: {
             type: Number,
             default: 0
+        },
+        preferences: {
+            theme: {
+                type: String,
+                enum: ["light", "dark"],
+                default: "light"
+            },
+            notificationsEnabled: {
+                type: Boolean,
+                default: true
+            },
+            currency: {
+                type: String,
+                default: "INR"
+            }
         },
         resetPasswordToken: {
             type: String,

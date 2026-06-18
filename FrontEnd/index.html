@@ -14,19 +14,22 @@
 
     <!-- Simple Navigation Header -->
     <header class="header">
-        <div class="logo">GarudaPay</div>
+        <div class="logo"><a href="landing.html" style="color: var(--brand-primary); text-decoration: none;">GarudaPay</a></div>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <a href="landing.html" style="color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 600;">Home</a>
+            <a href="about.html" style="color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 600;">About</a>
+            <a href="contact.html" style="color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 600;">Contact</a>
+        </div>
         <div id="navGuest" style="display: none;">
             <button class="nav-btn" id="toLoginBtn">Login</button>
             <button class="nav-btn" id="toRegisterBtn">Register</button>
         </div>
         <div id="navUser" style="display: none;">
+            <button class="nav-btn" onclick="window.location.href='dashboard.html'" style="background: var(--brand-primary); color: white; border-color: transparent;">Main Dashboard</button>
             <button class="nav-btn" id="toDashboardBtn">My Wallet</button>
             <button class="nav-btn" id="toTopUpBtn">Add Money</button>
             <button class="nav-btn" id="toHistoryBtn">Transactions</button>
             <button class="nav-btn" id="logoutBtn">Logout</button>
-        <div>
-            <button class="nav-btn" id="toDashboardBtn">My Wallet</button>
-            <button class="nav-btn" id="toTopUpBtn">Add Money</button>
         </div>
     </header>
 
@@ -34,7 +37,6 @@
 
         <!-- 1. WALLET DASHBOARD VIEW -->
         <div id="dashboardView" class="view">
-        <div id="dashboardView" class="view active">
             
             <!-- Balance Card -->
             <div class="card">

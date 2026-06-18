@@ -1,7 +1,7 @@
 // --- Base API Configuration ---
-const API_URL = 'http://localhost:5055/api/wallet';
-const AUTH_API_URL = 'http://localhost:5055/api/auth';
-const TX_API_URL = 'http://localhost:5055/api/transaction';
+const API_URL = '/api/wallet';
+const AUTH_API_URL = '/api/auth';
+const TX_API_URL = '/api/transaction';
 
 // --- State Variables ---
 let currentBalance = 0.00;
@@ -28,9 +28,6 @@ const forgotPasswordView = document.getElementById('forgotPasswordView');
 const resetPasswordView = document.getElementById('resetPasswordView');
 const transactionHistoryView = document.getElementById('transactionHistoryView');
 const txDetailsModal = document.getElementById('txDetailsModal');
-// Views
-const dashboardView = document.getElementById('dashboardView');
-const topupView = document.getElementById('topupView');
 
 // Tabs/Buttons
 const toDashboardBtn = document.getElementById('toDashboardBtn');
@@ -141,9 +138,6 @@ function hideAllViews() {
 function showDashboard() {
     hideAllViews();
     dashboardView.classList.add('active');
-function showDashboard() {
-    dashboardView.classList.add('active');
-    topupView.classList.remove('active');
     fetchWalletState();
 }
 
@@ -282,7 +276,7 @@ async function handleLogin(e) {
         if (res.ok && data.success) {
             currentUser = data.user;
             updateNavbar();
-            showDashboard();
+            window.location.href = "dashboard.html";
         } else {
             alert(data.message || 'Login failed.');
         }
@@ -310,7 +304,7 @@ async function handleRegister(e) {
         if (res.ok && data.success) {
             currentUser = data.user;
             updateNavbar();
-            showDashboard();
+            window.location.href = "dashboard.html";
         } else {
             alert(data.message || 'Registration failed.');
         }
@@ -738,6 +732,3 @@ txDetailsModal.addEventListener('click', (e) => {
 
 // Boot the application
 checkSession();
-// Boot the application
-fetchWalletState();
-showDashboard();

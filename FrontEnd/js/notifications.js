@@ -9,12 +9,18 @@ menuButton.addEventListener("click", function () {
 // This loads notifications from the backend API.
 async function loadNotifications() {
     try {
-        var response = await fetch("/api/notifications");
+        var response = await fetch("/api/notifications", { credentials: "include" });
         var notifications = await response.json();
 
         notificationsList.innerHTML = "";
 
+        if (notifications.length === 0) {
+            notificationsList.innerHTML = "<p class='empty-text'>No notifications found.</p>";
+            return;
+        }
+
         notifications.forEach(function (notification) {
+            var badgeClass = notification.status === "New" ? "status-new" : "status-read";
             notificationsList.innerHTML +=
                 "<div class='notification-card'>" +
                     "<div class='item-left'>" +
@@ -24,7 +30,7 @@ async function loadNotifications() {
                             "<p>" + notification.date + "</p>" +
                         "</div>" +
                     "</div>" +
-                    "<span class='status'>" + notification.status + "</span>" +
+                    "<span class='status " + badgeClass + "'>" + notification.status + "</span>" +
                 "</div>";
         });
     } catch (error) {
@@ -32,4 +38,12 @@ async function loadNotifications() {
     }
 }
 
-loadNotifications();
+// Check session and load page data
+async function init() {
+    const user = await checkAuthAndLoadPreferences();
+    if (user) {
+        loadNotifications();
+    }
+}
+
+init();

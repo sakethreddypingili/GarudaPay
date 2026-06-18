@@ -16,12 +16,12 @@
 
             <nav class="side-nav">
                 <a href="dashboard.html" class="active">Dashboard</a>
-                <a href="#">Profile</a>
-                <a href="#">Wallet</a>
-                <a href="#">Send Money</a>
-                <a href="#">Transactions</a>
+                <a href="profile.html">Profile</a>
+                <a href="index.html">Wallet & Top-up</a>
+                <a href="index.html">Send Money</a>
+                <a href="index.html">Transactions</a>
                 <a href="notifications.html">Notifications</a>
-                <a href="#">Settings</a>
+                <a href="settings.html">Settings</a>
                 <a href="landing.html">Logout</a>
             </nav>
         </aside>
@@ -60,16 +60,16 @@
             </section>
 
             <section class="quick-actions">
-                <button>Add Money</button>
-                <button>Send Money</button>
-                <button>View History</button>
+                <button onclick="window.location.href='index.html'">Add Money</button>
+                <button onclick="window.location.href='index.html'">Send Money</button>
+                <button onclick="window.location.href='index.html'">View History</button>
             </section>
 
             <section class="content-grid">
                 <div class="panel">
                     <div class="panel-header">
                         <h2>Recent Transactions</h2>
-                        <a href="#">View all</a>
+                        <a href="index.html">View all</a>
                     </div>
                     <div class="transaction-list" id="transactionList">
                         <p class="empty-text">Loading transactions...</p>
@@ -89,6 +89,7 @@
         </main>
     </div>
 
+    <script src="js/auth-check.js"></script>
     <script src="js/dashboard.js"></script>
 </body>
 </html>

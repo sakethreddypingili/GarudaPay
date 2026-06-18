@@ -10,12 +10,12 @@ menuButton.addEventListener("click", function () {
 // This loads the dashboard numbers from the backend.
 async function loadDashboardSummary() {
     try {
-        var response = await fetch("/api/dashboard/summary");
+        var response = await fetch("/api/dashboard/summary", { credentials: "include" });
         var summary = await response.json();
 
-        document.getElementById("walletBalance").textContent = "₹" + summary.walletBalance;
-        document.getElementById("totalSent").textContent = "₹" + summary.totalSent;
-        document.getElementById("totalReceived").textContent = "₹" + summary.totalReceived;
+        document.getElementById("walletBalance").textContent = "₹" + summary.walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+        document.getElementById("totalSent").textContent = "₹" + summary.totalSent.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+        document.getElementById("totalReceived").textContent = "₹" + summary.totalReceived.toLocaleString('en-IN', { minimumFractionDigits: 2 });
         document.getElementById("totalTransactions").textContent = summary.totalTransactions;
     } catch (error) {
         document.getElementById("walletBalance").textContent = "Unavailable";
@@ -28,7 +28,7 @@ async function loadDashboardSummary() {
 // This loads sample activity and transaction data.
 async function loadDashboardActivity() {
     try {
-        var response = await fetch("/api/dashboard/activity");
+        var response = await fetch("/api/dashboard/activity", { credentials: "include" });
         var activityData = await response.json();
 
         showTransactions(activityData.transactions);
@@ -41,6 +41,11 @@ async function loadDashboardActivity() {
 
 function showTransactions(transactions) {
     transactionList.innerHTML = "";
+
+    if (transactions.length === 0) {
+        transactionList.innerHTML = "<p class='empty-text'>No recent transactions.</p>";
+        return;
+    }
 
     transactions.forEach(function (transaction) {
         var amountClass = transaction.type === "sent" ? "sent" : "received";
@@ -55,13 +60,18 @@ function showTransactions(transactions) {
                         "<p>" + transaction.date + "</p>" +
                     "</div>" +
                 "</div>" +
-                "<span class='amount " + amountClass + "'>" + sign + "₹" + transaction.amount + "</span>" +
+                "<span class='amount " + amountClass + "'>" + sign + "₹" + transaction.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 }) + "</span>" +
             "</div>";
     });
 }
 
 function showActivity(activities) {
     activityList.innerHTML = "";
+
+    if (activities.length === 0) {
+        activityList.innerHTML = "<p class='empty-text'>No recent activity.</p>";
+        return;
+    }
 
     activities.forEach(function (activity) {
         activityList.innerHTML +=
@@ -78,5 +88,13 @@ function showActivity(activities) {
     });
 }
 
-loadDashboardSummary();
-loadDashboardActivity();
+// Check session and load page data
+async function init() {
+    const user = await checkAuthAndLoadPreferences();
+    if (user) {
+        loadDashboardSummary();
+        loadDashboardActivity();
+    }
+}
+
+init();

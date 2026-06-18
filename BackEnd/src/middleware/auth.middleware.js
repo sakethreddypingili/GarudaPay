@@ -14,7 +14,7 @@ const verifyToken = (req, res, next) => {
         }
 
         // if the toke is there then we will verify it, whether it is valid and not expired
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || "garudapay_secret_key_123")
 
         // if everything is good then the decoded object will be attached to user
         req.user = decoded;
@@ -29,5 +29,20 @@ const verifyToken = (req, res, next) => {
         });
     }
 }
+
+const optionalVerifyToken = (req, res, next) => {
+    try {
+        const token = req.cookies.token;
+        if (token) {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET || "garudapay_secret_key_123");
+            req.user = decoded;
+        }
+        next();
+    } catch (e) {
+        next();
+    }
+}
+
+verifyToken.optional = optionalVerifyToken;
 
 module.exports = verifyToken;

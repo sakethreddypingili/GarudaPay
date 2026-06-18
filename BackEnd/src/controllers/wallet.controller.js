@@ -16,10 +16,21 @@ const getOrCreateDemoUser = async () => {
     return user;
 };
 
+// Helper to get user from request if authenticated, else fallback to demo user
+const getUserFromReq = async (req) => {
+    if (req.user && req.user.id) {
+        const user = await User.findById(req.user.id);
+        if (user) {
+            return user;
+        }
+    }
+    return await getOrCreateDemoUser();
+};
+
 // GET /api/wallet/user
 exports.getOrCreateUser = async (req, res) => {
     try {
-        const user = await getOrCreateDemoUser();
+        const user = await getUserFromReq(req);
         res.status(200).json({
             name: user.name,
             email: user.email,
@@ -34,7 +45,7 @@ exports.getOrCreateUser = async (req, res) => {
 // GET /api/wallet/balance
 exports.getWalletBalance = async (req, res) => {
     try {
-        const user = await getOrCreateDemoUser();
+        const user = await getUserFromReq(req);
         res.status(200).json({ balance: user.balance });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -49,7 +60,7 @@ exports.topupWallet = async (req, res) => {
             return res.status(400).json({ error: 'Please enter a valid amount.' });
         }
 
-        const user = await getOrCreateDemoUser();
+        const user = await getUserFromReq(req);
         user.balance += amount;
         await user.save();
 
@@ -57,7 +68,7 @@ exports.topupWallet = async (req, res) => {
         // Create transaction matching new schema (sender/receiver both = user for self top-up)
         const newTx = new Transaction({
             sender: user._id,
-            reciever: user._id,
+            receiver: user._id,
             amount: amount,
             type: 'credit',
             status: 'completed',
@@ -86,9 +97,9 @@ exports.topupWallet = async (req, res) => {
 // GET /api/wallet/summary
 exports.getWalletSummary = async (req, res) => {
     try {
-        const user = await getOrCreateDemoUser();
+        const user = await getUserFromReq(req);
         const txs = await Transaction.find({
-            $or: [{ sender: user._id }, { reciever: user._id }]
+            $or: [{ sender: user._id }, { receiver: user._id }]
         }).sort({ createdAt: -1 });
 
         const formatted = txs.map(tx => {
@@ -118,19 +129,34 @@ exports.transferWallet = async (req, res) => {
             return res.status(400).json({ error: 'Please specify a recipient.' });
         }
 
-        const user = await getOrCreateDemoUser();
+        const user = await getUserFromReq(req);
         if (user.balance < amount) {
             return res.status(400).json({ error: 'Insufficient balance.' });
         }
 
+        // Try to find if recipient is an existing user by email or name (case-insensitive)
+        const recipientUser = await User.findOne({
+            $or: [
+                { email: recipient.toLowerCase().trim() },
+                { name: { $regex: new RegExp(`^${recipient.trim()}$`, 'i') } }
+            ]
+        });
+
         user.balance -= amount;
         await user.save();
 
+        let receiverId = user._id; // fallback if recipient is just free text
+        if (recipientUser && recipientUser._id.toString() !== user._id.toString()) {
+            recipientUser.balance += amount;
+            await recipientUser.save();
+            receiverId = recipientUser._id;
+        }
+
         const ref = 'GP-TX-' + Math.floor(1000 + Math.random() * 9000);
-        // Create transaction matching new schema (sender = user, receiver = dummy user or user self)
+        // Create transaction matching new schema (sender = user, receiver = receiverId)
         const newTx = new Transaction({
             sender: user._id,
-            reciever: user._id, // Keep it user id as recipient is free-form text in this demo
+            receiver: receiverId,
             amount: amount,
             type: 'debit',
             status: 'completed',
