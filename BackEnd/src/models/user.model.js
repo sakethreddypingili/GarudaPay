@@ -21,9 +21,14 @@ const userSchema = new mongoose.Schema(
             required: [true, "Password is required"],
             select: false
         },
-                balance: {
+        balance: {
             type: Number,
             default: 0
+        },
+        role: {
+            type: String,
+            enum: ["user", "admin"],
+            default: "user"
         },
         preferences: {
             theme: {

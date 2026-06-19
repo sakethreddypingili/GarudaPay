@@ -3,331 +3,928 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GarudaPay Wallet</title>
-    <!-- Fonts: Outfit and Plus Jakarta Sans -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/css/style.css">
+    <title>GarudaPay | India's Premier Digital Wallet</title>
+    <!-- Custom animations styled directly -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f4f7fc; /* Light background */
+            --text-main: #333333; /* Dark text */
+            --text-muted: #64748b;
+            --primary: #1b3a6a; /* Brand Primary */
+            --primary-light: #e2e8f0;
+            --accent: #10b981; /* Green */
+            --border: #e2e8f0;
+        }
+        
+                * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg); 
+            color: var(--text-main); 
+            overflow-x: hidden; 
+        }
+
+        /* Background floating decorations */
+        .bg-decorations {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1; /* Floats above background colors but behind content */
+        }
+        .bg-float {
+            position: absolute;
+            top: 0;
+            font-size: 32px;
+            color: rgba(37, 99, 235, 0.35);
+            text-shadow: 0 0 8px rgba(37, 99, 235, 0.25);
+            animation: floatDecor var(--float-dur, 15s) infinite linear;
+            user-select: none;
+            will-change: transform;
+        }
+        .bg-float::before, .bg-float::after {
+            content: attr(data-char);
+            position: absolute;
+            opacity: 0.6;
+        }
+        .bg-float::before { left: -35px; top: -50px; transform: scale(0.8) rotate(15deg); }
+        .bg-float::after { right: -40px; bottom: -70px; transform: scale(0.65) rotate(-20deg); }
+        @keyframes floatDecor {
+            0% { transform: translateY(105vh) rotate(0deg); }
+            100% { transform: translateY(-10vh) rotate(360deg); }
+        }
+        
+        /* Navigation */
+        header { 
+            position: fixed; width: 100%; top: 0; display: flex; 
+            justify-content: space-between; align-items: center;
+            padding: 16px 5%; background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 100; border-bottom: 1px solid var(--border);
+        }
+        .logo { 
+            font-size: 22px; font-weight: 800; font-family: 'Outfit', sans-serif;
+            color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; 
+        }
+        .nav-links a { 
+            color: var(--text-muted); text-decoration: none; margin-left: 32px; 
+            font-weight: 600; font-size: 15px; transition: color 0.3s; 
+        }
+        .nav-links a:hover { color: var(--text-main); }
+        .btn { 
+            background: var(--primary); color: #fff !important; padding: 10px 24px; 
+            border-radius: 8px; text-decoration: none; font-weight: 600; 
+            transition: all 0.3s; border: none; display: inline-block; 
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+        .btn:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3); }
+        .btn-secondary {
+            background: white; color: var(--text-main) !important; border: 1px solid var(--border);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .btn-secondary:hover { background: var(--bg); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+        /* Sections */
+        section { 
+            min-height: 100vh; display: flex; align-items: center; padding: 0 10%; position: relative; 
+        }
+        .content { flex: 1; z-index: 10; padding: 20px; }
+        .canvas-container { flex: 1; height: 600px; position: relative; }
+        
+        h1 { font-family: 'Outfit', sans-serif; font-size: 4.2rem; margin-bottom: 24px; line-height: 1.15; font-weight: 800; letter-spacing: -1px; }
+        h2 { font-family: 'Outfit', sans-serif; font-size: 3rem; margin-bottom: 20px; font-weight: 800; letter-spacing: -0.5px; }
+        p.lead { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 32px; max-width: 540px; line-height: 1.6; }
+        
+        .badge {
+            display: inline-block; padding: 6px 14px; background: var(--primary-light); 
+            color: var(--primary); font-size: 0.85rem; font-weight: 700; border-radius: 20px; 
+            margin-bottom: 24px; letter-spacing: 0.5px; text-transform: uppercase;
+        }
+
+        #hero { padding-top: 80px; background: radial-gradient(circle at top right, rgba(37,99,235,0.05), transparent 50%); }
+        .reverse { flex-direction: row-reverse; }
+        .reverse .content { padding-left: 8%; padding-right: 0; }
+        .content { padding-right: 8%; }
+
+        /* Detail List */
+        .feature-list { list-style: none; margin-bottom: 32px; }
+        .feature-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-weight: 600; color: var(--text-main); }
+        .feature-list li svg { color: var(--accent); width: 20px; height: 20px; }
+
+        /* Footer */
+        footer {
+            padding: 60px 10%; background: #ffffff; display: flex; justify-content: space-between; 
+            align-items: center; border-top: 1px solid var(--border);
+        }
+        .footer-logo { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 24px; color: var(--primary); text-decoration: none; }
+        .footer-text { color: var(--text-muted); font-size: 0.95rem; margin-top: 12px; max-width: 300px; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; margin-left: 24px; font-size: 0.95rem; font-weight: 600; }
+        .footer-links a:hover { color: var(--primary); }
+
+        @media (max-width: 900px) {
+            section { flex-direction: column; text-align: center; padding-top: 100px; min-height: auto; padding-bottom: 60px; }
+            .reverse { flex-direction: column; }
+            .content, .reverse .content { padding: 0 5%; }
+            h1 { font-size: 3rem; }
+            h2 { font-size: 2.5rem; }
+            p.lead { margin: 0 auto 32px auto; }
+            .canvas-container { width: 100%; height: 400px; margin-top: 20px; }
+            .nav-links { display: none; }
+            .feature-list { display: inline-block; text-align: left; }
+            footer { flex-direction: column; text-align: center; gap: 30px; }
+            .footer-links a { margin: 0 12px; }
+        }
+
+        /* ---------------- New Interactive CSS & SVG Animations ---------------- */
+        
+        /* General Container overrides */
+        .canvas-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: visible;
+        }
+
+        /* 1. Hero Card Animation (State Machine Cycle) */
+        .card-animation-wrapper {
+            position: relative;
+            width: 380px;
+            height: 240px;
+            perspective: 1000px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .glow-sphere {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            filter: blur(50px);
+            z-index: 1;
+            opacity: 0.65;
+            animation: orbFloat 8s infinite ease-in-out;
+        }
+        .orb1 {
+            background: #2563eb;
+            top: -20px;
+            right: 20px;
+            animation-delay: 0s;
+        }
+        .orb2 {
+            background: #10b981;
+            bottom: -20px;
+            left: 20px;
+            animation-delay: -4s;
+        }
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-15px) scale(1.1); }
+        }
+        .premium-card {
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            position: relative;
+            z-index: 2;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        }
+
+        /* Card States (6s total loop) */
+        .card-state-garuda,
+        .card-state-skeleton,
+        .card-state-payment,
+        .card-state-success {
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* 0. Garuda Card State CSS */
+        .card-state-garuda {
+            animation: cycleGaruda 6s infinite;
+        }
+        .card-glass {
+            position: absolute; inset: 0; border-radius: 20px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.05));
+            backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.3); z-index: 1;
+        }
+        .card-content {
+            position: absolute; inset: 0; padding: 28px; z-index: 2; color: #1e293b;
+            display: flex; flex-direction: column; justify-content: space-between; transform: translateZ(30px);
+        }
+        .card-brand {
+            font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.5rem;
+            background: linear-gradient(90deg, #1e3a8a, #2563eb); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .card-chip {
+            width: 50px; height: 38px; background: linear-gradient(135deg, #fbbf24, #d97706);
+            border-radius: 6px; position: relative; box-shadow: inset 0 1px 3px rgba(255,255,255,0.5);
+        }
+        .card-number {
+            font-family: monospace; font-size: 1.4rem; font-weight: bold; letter-spacing: 2.5px; color: #0f172a;
+        }
+        .card-footer { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; color: #0f172a; }
+        .card-label { font-size: 0.65rem; font-weight: 600; color: #64748b; letter-spacing: 1px; margin-bottom: 4px; }
+
+        /* 1. Skeleton State CSS */
+        .card-state-skeleton {
+            background: rgba(15, 23, 42, 0.03);
+            border: 2px dashed rgba(37, 99, 235, 0.3);
+            box-shadow: inset 0 0 15px rgba(37, 99, 235, 0.1);
+            animation: cycleSkeleton 6s infinite;
+        }
+        .skeleton-glow-outline {
+            position: absolute;
+            inset: -2px;
+            border-radius: 20px;
+            border: 2px solid #2563eb;
+            filter: drop-shadow(0 0 8px #2563eb);
+            clip-path: inset(0 0 0 0);
+            animation: drawOutline 3s infinite linear;
+        }
+        @keyframes drawOutline {
+            0% { clip-path: inset(0 100% 100% 0); }
+            25% { clip-path: inset(0 0 100% 0); }
+            50% { clip-path: inset(0 0 0 0); }
+            75% { clip-path: inset(100% 0 0 0); }
+            100% { clip-path: inset(100% 100% 0 0); }
+        }
+        .skeleton-chip {
+            width: 44px;
+            height: 32px;
+            border: 1.5px dashed rgba(37, 99, 235, 0.6);
+            margin: 28px;
+            border-radius: 4px;
+            position: relative;
+        }
+        .skeleton-line {
+            height: 8px;
+            background: rgba(37, 99, 235, 0.15);
+            border-radius: 4px;
+            margin-left: 28px;
+            margin-bottom: 12px;
+        }
+        .skeleton-line.short { width: 80px; }
+        .skeleton-line.long { width: 180px; margin-bottom: 28px; }
+
+        /* 2. Payment State CSS */
+        .card-state-payment {
+            background: rgba(15, 23, 42, 0.05);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.15);
+            align-items: center;
+            justify-content: center;
+            animation: cyclePayment 6s infinite;
+        }
+        .payment-shield {
+            width: 64px;
+            height: 64px;
+            background: rgba(168, 85, 247, 0.1);
+            border: 2.5px solid #a855f7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a855f7;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+            margin-bottom: 12px;
+            animation: shieldPulse 1.5s infinite;
+        }
+        .lock-icon { width: 28px; height: 28px; }
+        .payment-status {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: #a855f7;
+            letter-spacing: 3px;
+        }
+        .payment-beams {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .beam {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #a855f7, transparent);
+            width: 60px;
+            animation: beamMove 2s infinite linear;
+        }
+        .beam:nth-child(1) { top: 30%; left: -20px; animation-delay: 0s; }
+        .beam:nth-child(2) { top: 55%; right: -20px; animation-direction: reverse; animation-delay: 0.7s; }
+        .beam:nth-child(3) { bottom: 30%; left: -20px; animation-delay: 1.4s; }
+        @keyframes beamMove {
+            0% { transform: translateX(-100px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(380px); opacity: 0; }
+        }
+
+        /* 3. Success State CSS */
+        .card-state-success {
+            background: rgba(16, 185, 129, 0.04);
+            border: 2px solid rgba(16, 185, 129, 0.35);
+            box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.15);
+            align-items: center;
+            justify-content: center;
+            animation: cycleSuccess 6s infinite;
+        }
+
+        /* Cycle Animations */
+        @keyframes cycleGaruda {
+            0%, 15% { opacity: 1; z-index: 5; }
+            16.67%, 98.33% { opacity: 0; z-index: 1; }
+            100% { opacity: 1; z-index: 5; }
+        }
+        @keyframes cycleSkeleton {
+            0%, 15% { opacity: 0; z-index: 1; }
+            16.67%, 31.67% { opacity: 1; z-index: 5; }
+            33.33%, 48.33% { opacity: 0; z-index: 1; }
+            50%, 65% { opacity: 1; z-index: 5; }
+            66.67%, 81.67% { opacity: 0; z-index: 1; }
+            83.33%, 98.33% { opacity: 1; z-index: 5; }
+            100% { opacity: 0; z-index: 1; }
+        }
+        @keyframes cyclePayment {
+            0%, 31.67% { opacity: 0; z-index: 1; }
+            33.33%, 48.33% { opacity: 1; z-index: 5; }
+            50%, 100% { opacity: 0; z-index: 1; }
+        }
+        @keyframes cycleSuccess {
+            0%, 65% { opacity: 0; z-index: 1; }
+            66.67%, 81.67% { opacity: 1; z-index: 5; }
+            83.33%, 100% { opacity: 0; z-index: 1; }
+        }
+
+        /* 2. UPI/Security Shield Animation */
+        .upi-animation-wrapper {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .shield-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .shield-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.3);
+            z-index: 3;
+            animation: shieldPulse 3s infinite ease-in-out;
+        }
+        .shield-icon svg {
+            width: 44px;
+            height: 44px;
+        }
+        @keyframes shieldPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 15px 35px rgba(16, 185, 129, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 20px 45px rgba(16, 185, 129, 0.5); }
+        }
+        .pulse-ring {
+            position: absolute;
+            border: 2px solid rgba(16, 185, 129, 0.2);
+            border-radius: 50%;
+            animation: ringRipple 4s infinite cubic-bezier(0.1, 0.8, 0.3, 1);
+            z-index: 1;
+        }
+        .ring-1 { width: 180px; height: 180px; animation-delay: 0s; }
+        .ring-2 { width: 240px; height: 240px; animation-delay: 1.3s; }
+        .ring-3 { width: 300px; height: 300px; animation-delay: 2.6s; }
+        @keyframes ringRipple {
+            0% { transform: scale(0.6); opacity: 1; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+        .scanner-bar {
+            position: absolute;
+            width: 280px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #10b981, transparent);
+            box-shadow: 0 0 15px #10b981;
+            animation: scanMove 4s infinite ease-in-out;
+            z-index: 2;
+        }
+        @keyframes scanMove {
+            0%, 100% { top: 20%; opacity: 0; }
+            10%, 90% { opacity: 1; }
+            50% { top: 80%; }
+        }
+        .secure-badge {
+            margin-top: 30px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #10b981;
+            letter-spacing: 2px;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.05);
+        }
+
+        /* 3. Speed/Transaction Flow Animation */
+        .transaction-flow-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            justify-content: center;
+        }
+        .phone-mockup {
+            width: 120px;
+            height: 200px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            z-index: 2;
+            transition: transform 0.3s;
+        }
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            background: white;
+            border: 1px solid #f1f5f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .phone-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .phone-amt {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+        .flow-path-container {
+            position: relative;
+            flex: 1;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .flow-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+        .flying-coin {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: #a855f7;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+            offset-path: path("M 10 20 Q 100 0, 190 20");
+            animation: flyCoin 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes flyCoin {
+            0% { offset-distance: 0%; opacity: 0; transform: scale(0.5); }
+            10% { opacity: 1; transform: scale(1); }
+            90% { opacity: 1; transform: scale(1); }
+            100% { offset-distance: 100%; opacity: 0; transform: scale(0.5); }
+        }
+
+        /* 4. Chart/Growth Animation */
+        .chart-animation-wrapper {
+            position: relative;
+            width: 320px;
+            height: 240px;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.04);
+        }
+        .chart-grid {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 100%;
+            width: 100%;
+            z-index: 2;
+        }
+        .chart-bar {
+            width: 45px;
+            height: 0;
+            border-radius: 6px 6px 0 0;
+            background: var(--color);
+            position: relative;
+            cursor: pointer;
+            transition: filter 0.2s;
+            animation: growBar 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: var(--delay);
+        }
+        .chart-bar:hover {
+            filter: brightness(1.1);
+        }
+        .bar-tooltip {
+            position: absolute;
+            top: -36px;
+            left: 50%;
+            transform: translateX(-50%) translateY(5px);
+            background: var(--text-main);
+            color: white;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 4px;
+            opacity: 0;
+            transition: all 0.2s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .chart-bar:hover .bar-tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        @keyframes growBar {
+            to { height: var(--height); }
+        }
+        .chart-line-wrapper {
+            position: absolute;
+            inset: 24px;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .chart-line-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+        .draw-line {
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+            animation: drawLine 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation-delay: 0.8s;
+        }
+        @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
+        }
+        .chart-endpoint {
+            opacity: 0;
+            animation: fadeInPoint 0.5s ease-out forwards;
+            animation-delay: 2.5s;
+        }
+        @keyframes fadeInPoint {
+            to { opacity: 1; }
+        }
+    </style>
 </head>
 <body>
+    <!-- Background Floating Decorations (7 elements generating 21 visible currencies) -->
+    <div class="bg-decorations">
+        <div class="bg-float" data-char="₹" style="left: 10%; --float-dur: 13s; animation-delay: 0s;">₹</div>
+        <div class="bg-float" data-char="$" style="left: 30%; --float-dur: 16s; animation-delay: -4s;">$</div>
+        <div class="bg-float" data-char="€" style="left: 50%; --float-dur: 18s; animation-delay: -8s;">€</div>
+        <div class="bg-float" data-char="£" style="left: 70%; --float-dur: 15s; animation-delay: -2s;">£</div>
+        <div class="bg-float" data-char="¥" style="left: 90%; --float-dur: 20s; animation-delay: -10s;">¥</div>
+        <div class="bg-float" data-char="₹" style="left: 20%; --float-dur: 22s; animation-delay: -6s;">₹</div>
+        <div class="bg-float" data-char="$" style="left: 80%; --float-dur: 17s; animation-delay: -12s;">$</div>
+    </div>
 
-    <!-- Simple Navigation Header -->
-    <header class="header">
-        <div class="logo"><a href="landing.html" style="color: var(--brand-primary); text-decoration: none;">GarudaPay</a></div>
-        <div style="display: flex; gap: 20px; align-items: center;">
-            <a href="landing.html" style="color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 600;">Home</a>
-            <a href="about.html" style="color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 600;">About</a>
-            <a href="contact.html" style="color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 600;">Contact</a>
-        </div>
-        <div id="navGuest" style="display: none;">
-            <button class="nav-btn" id="toLoginBtn">Login</button>
-            <button class="nav-btn" id="toRegisterBtn">Register</button>
-        </div>
-        <div id="navUser" style="display: none;">
-            <button class="nav-btn" onclick="window.location.href='dashboard.html'" style="background: var(--brand-primary); color: white; border-color: transparent;">Main Dashboard</button>
-            <button class="nav-btn" id="toDashboardBtn">My Wallet</button>
-            <button class="nav-btn" id="toTopUpBtn">Add Money</button>
-            <button class="nav-btn" id="toHistoryBtn">Transactions</button>
-            <button class="nav-btn" id="logoutBtn">Logout</button>
+    <header>
+        <a href="/" class="logo">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            GarudaPay
+        </a>
+        <div class="nav-links">
+            <a href="#features" class="hoverable">Features</a>
+            <a href="#pricing" class="hoverable">Pricing</a>
+            <a href="#security" class="hoverable">Security</a>
+            <a href="src/html/about.html" class="hoverable">About Us</a>
+            <a href="src/html/contact.html" class="hoverable">Support</a>
+            <a href="src/html/app.html" class="btn hoverable">Open Dashboard</a>
         </div>
     </header>
 
-    <div class="container">
-
-        <!-- 1. WALLET DASHBOARD VIEW -->
-        <div id="dashboardView" class="view">
-            
-            <!-- Balance Card -->
-            <div class="card">
-                <div class="balance-title">Wallet Balance</div>
-                <div class="balance-amount" id="balanceText">₹0.00</div>
-                <button class="nav-btn" id="quickAddBtn">+ Top-Up Money</button>
+    <!-- 1. Hero: Glass Credit Card representing Modern Payments -->
+    <section id="hero">
+        <div class="content">
+            <div class="badge">Next Generation Wallet</div>
+            <h1>Smart payments for <span style="color: var(--primary);">modern India.</span></h1>
+            <p class="lead">GarudaPay replaces clunky bank interfaces with a sleek, unified dashboard. Send money, track your wealth, and pay merchants instantly with zero friction.</p>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                <a href="src/html/app.html" class="btn hoverable" style="padding: 14px 32px; font-size: 1.1rem;">Create Free Account</a>
+                <a href="src/html/about.html" class="btn btn-secondary hoverable" style="padding: 14px 32px; font-size: 1.1rem;">Discover Features</a>
             </div>
-
-            <!-- Transaction History Card -->
-            <div class="card">
-                <h3>Recent Transactions</h3>
-                <div id="transactionsList">
-                    <!-- Loaded dynamically via simple JavaScript -->
-                </div>
-            </div>
-
         </div>
-
-        <!-- 2. ADD MONEY / TOP-UP VIEW -->
-        <div id="topupView" class="view">
-            
-            <div class="card">
-                <h3>Add Money to Wallet</h3>
-                
-                <!-- Input Form -->
-                <div id="topupFormContainer">
-                    <form id="topupForm">
-                        <div class="form-group">
-                            <label class="form-label" for="amountInput">Enter Amount (INR)</label>
-                            <input type="number" id="amountInput" class="form-input" value="1000" min="10" required>
-                            
-                            <div class="presets-container">
-                                <button type="button" class="preset-btn" data-val="500">+₹500</button>
-                                <button type="button" class="preset-btn" data-val="1000">+₹1,000</button>
-                                <button type="button" class="preset-btn" data-val="2000">+₹2,000</button>
+        <!-- Interactive CSS Glass Credit Card representing Modern Payments -->
+        <div class="canvas-container" id="canvas-card">
+            <div class="card-animation-wrapper">
+                <div class="glow-sphere orb1"></div>
+                <div class="glow-sphere orb2"></div>
+                <div class="premium-card">
+                    <!-- 0. Garuda Premium Card State -->
+                    <div class="card-state-garuda">
+                        <div class="card-glass"></div>
+                        <div class="card-content">
+                            <div class="card-header">
+                                <span class="card-brand">GarudaPay</span>
+                                <svg style="width: 24px; height: 24px; color: #2563eb;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8a6 6 0 0 1 10.4-4M2 12a10 10 0 0 1 17.3-6M2 16a14 14 0 0 1 24.2-8"/></svg>
+                            </div>
+                            <div class="card-chip"></div>
+                            <div class="card-number">•••• •••• •••• 8848</div>
+                            <div class="card-footer">
+                                <div>
+                                    <div class="card-label">CARD HOLDER</div>
+                                    <div style="color: #0f172a;">GARUDAPAY PREMIUM</div>
+                                </div>
+                                <div>
+                                    <div class="card-label">EXPIRES</div>
+                                    <div style="color: #0f172a;">12/30</div>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="methodSelect">Choose Payment Method</label>
-                            <select id="methodSelect" class="form-input">
-                                <option value="HDFC Bank">HDFC Bank Account</option>
-                                <option value="UPI NetBanking">BHIM UPI ID</option>
-                                <option value="Debit Card">Debit / Credit Card</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="nav-btn" style="width: 100%; padding: 12px;">Add Funds Now</button>
-                    </form>
-                </div>
-
-                <!-- Simple Spinner/Loading State -->
-                <div id="loadingState" class="view">
-                    <div class="loading-indicator">Processing transaction. Please wait...</div>
-                </div>
-
-                <!-- Success Screen with Receipt -->
-                <div id="successState" class="view">
-                    <div class="success-message">
-                        <h4>Top-Up Successful!</h4>
-                        <p>Your wallet balance has been updated.</p>
                     </div>
 
-                    <div class="receipt">
-                        <div class="receipt-row">
-                            <span>Transaction ID:</span>
-                            <span id="receiptTxId"></span>
+                    <!-- 1. Skeleton / Wireframe State -->
+                    <div class="card-state-skeleton">
+                        <div class="skeleton-glow-outline"></div>
+                        <div class="skeleton-chip"></div>
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-line long"></div>
+                    </div>
+                    
+                    <!-- 2. Payment Processing State -->
+                    <div class="card-state-payment">
+                        <div class="payment-shield">
+                            <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                         </div>
-                        <div class="receipt-row">
-                            <span>Amount Added:</span>
-                            <span id="receiptAmount"></span>
-                        </div>
-                        <div class="receipt-row">
-                            <span>Payment Method:</span>
-                            <span id="receiptMethod"></span>
-                        </div>
-                        <div class="receipt-row">
-                            <span>Date:</span>
-                            <span id="receiptDate"></span>
+                        <div class="payment-status">PROCESSING...</div>
+                        <div class="payment-beams">
+                            <span class="beam"></span>
+                            <span class="beam"></span>
+                            <span class="beam"></span>
                         </div>
                     </div>
-
-                    <button class="nav-btn" id="finishBtn" style="width: 100%;">Done</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- LOGIN VIEW -->
-        <div id="loginView" class="view">
-            <div class="card">
-                <h3>Welcome Back</h3>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label class="form-label" for="loginEmail">Email Address</label>
-                        <input type="email" id="loginEmail" class="form-input" placeholder="Enter your email" required autocomplete="username">
+                    
+                    <!-- 3. Success Green State -->
+                    <div class="card-state-success" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;">
+                        <svg style="width: 52px; height: 52px; color: #10b981; filter: drop-shadow(0 0 8px rgba(16,185,129,0.5));" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        <div style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; color: #10b981; letter-spacing: 3px;">SUCCESSFUL</div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label" for="loginPassword">Password</label>
-                        <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" required autocomplete="current-password">
-                    </div>
-                    <button type="submit" class="nav-btn" style="width: 100%; padding: 12px; margin-left: 0;">Sign In</button>
-                </form>
-                <div style="margin-top: 16px; text-align: center; font-size: 14px;">
-                    <a href="#" id="linkForgotPassword" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Forgot Password?</a>
-                </div>
-                <div style="margin-top: 12px; text-align: center; font-size: 14px; color: var(--text-secondary);">
-                    Don't have an account? <a href="#" id="linkRegister" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Register here</a>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- REGISTER VIEW -->
-        <div id="registerView" class="view">
-            <div class="card">
-                <h3>Create Account</h3>
-                <form id="registerForm">
-                    <div class="form-group">
-                        <label class="form-label" for="registerName">Full Name</label>
-                        <input type="text" id="registerName" class="form-input" placeholder="Enter your full name" required>
+    <!-- 2. Security: Bank Vault / Core -->
+    <section id="security" class="reverse" style="background: #ffffff; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+        <div class="content">
+            <div class="badge" style="background: #f0fdf4; color: #10b981;">Bank-Grade Protection</div>
+            <h2>Ironclad Security Core.</h2>
+            <p class="lead">Your funds are shielded by military-grade AES-256 encryption. Our robust escrow architecture ensures that money only moves when authorized by you.</p>
+            <ul class="feature-list">
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> End-to-end encrypted transfers</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Real-time fraud detection systems</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Automated escrow fund protection</li>
+            </ul>
+        </div>
+        <!-- Animated Security Shield and QR Scan -->
+        <div class="canvas-container" id="canvas-vault">
+            <div class="upi-animation-wrapper">
+                <div class="shield-container">
+                    <div class="pulse-ring ring-1"></div>
+                    <div class="pulse-ring ring-2"></div>
+                    <div class="pulse-ring ring-3"></div>
+                    <div class="shield-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 15l-4-4 1.41-1.41L10 13.17l5.59-5.59L17 9l-7 7z"/></svg>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label" for="registerEmail">Email Address</label>
-                        <input type="email" id="registerEmail" class="form-input" placeholder="Enter your email" required autocomplete="username">
+                </div>
+                <div class="scanner-bar"></div>
+                <div class="secure-badge">AES-256 SECURED</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Speed/Scale: Particle Data Stream -->
+    <section id="features" style="background: radial-gradient(circle at left center, rgba(37,99,235,0.03), transparent 60%);">
+        <div class="content">
+            <div class="badge" style="background: #fdf4ff; color: #a855f7;">Lightning Network</div>
+            <h2>Instantaneous Transfers.</h2>
+            <p class="lead">Forget waiting days for settlements. GarudaPay utilizes a high-frequency routing engine to finalize peer-to-peer and merchant payments in milliseconds.</p>
+            <a href="/src/html/app.html" class="btn hoverable" style="background: #a855f7;">Experience the Speed &rarr;</a>
+        </div>
+        <!-- Interactive Transaction Transfer Flow -->
+        <div class="canvas-container" id="canvas-stream">
+            <div class="transaction-flow-wrapper">
+                <div class="phone-mockup phone-sender">
+                    <div class="phone-screen">
+                        <div class="avatar">A</div>
+                        <div class="phone-label">Sending</div>
+                        <div class="phone-amt">₹5,000</div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label" for="registerPassword">Password</label>
-                        <input type="password" id="registerPassword" class="form-input" placeholder="Must be at least 6 characters" minlength="6" required autocomplete="new-password">
+                </div>
+                <div class="flow-path-container">
+                    <svg class="flow-svg" viewBox="0 0 200 40">
+                        <path d="M 10 20 Q 100 0, 190 20" fill="none" stroke="url(#flow-gradient)" stroke-dasharray="10 5" stroke-width="4">
+                            <animate attributeName="stroke-dashoffset" values="100;0" dur="2s" repeatCount="indefinite" />
+                        </path>
+                        <defs>
+                            <linearGradient id="flow-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#2563eb" />
+                                <stop offset="50%" stop-color="#a855f7" />
+                                <stop offset="100%" stop-color="#10b981" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="flying-coin">₹</div>
+                </div>
+                <div class="phone-mockup phone-receiver">
+                    <div class="phone-screen">
+                        <div class="avatar" style="background: #10b981;">B</div>
+                        <div class="phone-label">Received</div>
+                        <div class="phone-amt" style="color: #10b981;">+₹5,000</div>
                     </div>
-                    <button type="submit" class="nav-btn" style="width: 100%; padding: 12px; margin-left: 0;">Sign Up</button>
-                </form>
-                <div style="margin-top: 16px; text-align: center; font-size: 14px; color: var(--text-secondary);">
-                    Already have an account? <a href="#" id="linkLogin" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Sign in here</a>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- FORGOT PASSWORD VIEW -->
-        <div id="forgotPasswordView" class="view">
-            <div class="card">
-                <h3>Recover Account</h3>
-                <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">
-                    Enter your email address and we'll generate a password reset link for you.
-                </p>
-                <form id="forgotPasswordForm">
-                    <div class="form-group">
-                        <label class="form-label" for="forgotEmail">Email Address</label>
-                        <input type="email" id="forgotEmail" class="form-input" placeholder="Enter your email" required>
+    <!-- 4. Growth/Dashboard: 3D Wealth Chart -->
+    <section class="reverse" style="background: #ffffff; border-top: 1px solid var(--border);">
+        <div class="content">
+            <div class="badge" style="background: #fffbeb; color: #d97706;">Wealth Management</div>
+            <h2>Track Your Growth.</h2>
+            <p class="lead">Our intuitive dashboard gives you deep insights into your spending habits. Export statements, set limits, and watch your digital wallet balance grow.</p>
+            <ul class="feature-list">
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Visual transaction history</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> One-click CSV statement exports</li>
+            </ul>
+        </div>
+        <!-- Interactive CSS/SVG Spending and Growth Chart -->
+        <div class="canvas-container" id="canvas-chart">
+            <div class="chart-animation-wrapper">
+                <div class="chart-grid">
+                    <div class="chart-bar" style="--height: 40%; --delay: 0.1s; --color: #3b82f6;">
+                        <span class="bar-tooltip">₹12.5k</span>
                     </div>
-                    <button type="submit" class="nav-btn" style="width: 100%; padding: 12px; margin-left: 0;">Send Reset Link</button>
-                </form>
-                
-                <div id="forgotPasswordDebugContainer" style="display: none; margin-top: 20px; padding: 12px; background: rgba(27, 58, 106, 0.05); border-radius: 8px; font-size: 13px; border: 1px dashed var(--brand-primary);">
-                    <strong>Development Note:</strong> Email sending failed or bypassed. You can use the generated reset link below:
-                    <div style="margin-top: 6px; word-break: break-all;"><a href="#" id="forgotPasswordDebugLink" style="color: var(--brand-primary); font-weight: 600; text-decoration: underline;"></a></div>
+                    <div class="chart-bar" style="--height: 65%; --delay: 0.3s; --color: #6366f1;">
+                        <span class="bar-tooltip">₹24.0k</span>
+                    </div>
+                    <div class="chart-bar" style="--height: 50%; --delay: 0.5s; --color: #a855f7;">
+                        <span class="bar-tooltip">₹18.2k</span>
+                    </div>
+                    <div class="chart-bar" style="--height: 85%; --delay: 0.7s; --color: #10b981;">
+                        <span class="bar-tooltip">₹39.8k</span>
+                    </div>
                 </div>
-
-                <div style="margin-top: 20px; text-align: center; font-size: 14px;">
-                    <a href="#" id="linkBackToLogin1" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Back to Login</a>
+                <div class="chart-line-wrapper">
+                    <svg class="chart-line-svg" viewBox="0 0 200 100" preserveAspectRatio="none">
+                        <path d="M 10 90 L 60 70 L 110 80 L 160 30" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="draw-line" />
+                        <circle cx="160" cy="30" r="4" fill="#10b981" class="chart-endpoint" />
+                    </svg>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- RESET PASSWORD VIEW -->
-        <div id="resetPasswordView" class="view">
-            <div class="card">
-                <h3>Set New Password</h3>
-                <form id="resetPasswordForm">
-                    <div class="form-group">
-                        <label class="form-label" for="resetToken">Reset Token</label>
-                        <input type="text" id="resetToken" class="form-input" placeholder="Paste the token from email/console" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="resetPassword">New Password</label>
-                        <input type="password" id="resetPassword" class="form-input" placeholder="Must be at least 6 characters" minlength="6" required autocomplete="new-password">
-                    </div>
-                    <button type="submit" class="nav-btn" style="width: 100%; padding: 12px; margin-left: 0;">Update Password</button>
-                </form>
-                <div style="margin-top: 20px; text-align: center; font-size: 14px;">
-                    <a href="#" id="linkBackToLogin2" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Back to Login</a>
+    <!-- 5. Pricing Section -->
+    <section id="pricing" style="background: radial-gradient(circle at right center, rgba(37,99,235,0.03), transparent 60%); padding: 80px 10%; flex-direction: column; text-align: center; min-height: auto;">
+        <div class="badge" style="background: #eff6ff; color: #2563eb; margin: 0 auto 20px auto;">Pricing Plans</div>
+        <h2 style="margin-bottom: 16px;">Transparent, flat rates.</h2>
+        <p class="lead" style="margin: 0 auto 48px auto;">No hidden commissions. Choose the tier that matches your monthly volume.</p>
+        
+        <div style="display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 1000px; margin: 0 auto;">
+            <!-- Free Plan -->
+            <div style="flex: 1; min-width: 280px; max-width: 320px; background: rgba(255,255,255,0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 16px; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s;">
+                <div>
+                    <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; margin-bottom: 8px;">Starter</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px;">Perfect for simple P2P money transfers.</p>
+                    <div style="font-size: 2.5rem; font-weight: 800; font-family: 'Outfit', sans-serif; margin-bottom: 24px; color: var(--text-main);">₹0 <span style="font-size: 1rem; color: var(--text-muted); font-weight: normal;">/ month</span></div>
+                    <ul style="list-style: none; padding: 0; margin-bottom: 32px;">
+                        <li style="margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Free P2P transfers</li>
+                        <li style="margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Wallet limit up to ₹10k</li>
+                        <li style="margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Standard security core</li>
+                    </ul>
                 </div>
+                <a href="src/html/app.html" class="btn btn-secondary" style="width: 100%; text-align: center;">Get Started</a>
+            </div>
+
+            <!-- Premium Plan -->
+            <div style="flex: 1; min-width: 280px; max-width: 320px; background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 2px solid var(--primary); border-radius: 16px; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; text-align: left; box-shadow: 0 20px 40px rgba(37,99,235,0.1); position: relative; transition: transform 0.3s;">
+                <div style="position: absolute; top: -14px; right: 20px; background: var(--primary); color: white; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">Most Popular</div>
+                <div>
+                    <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; margin-bottom: 8px;">Pro Wallet</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px;">For active users & small freelancers.</p>
+                    <div style="font-size: 2.5rem; font-weight: 800; font-family: 'Outfit', sans-serif; margin-bottom: 24px; color: var(--text-main);">₹199 <span style="font-size: 1rem; color: var(--text-muted); font-weight: normal;">/ month</span></div>
+                    <ul style="list-style: none; padding: 0; margin-bottom: 32px;">
+                        <li style="margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Unlimited P2P & merchant</li>
+                        <li style="margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Wallet limit up to ₹2L</li>
+                        <li style="margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Priority support & alerts</li>
+                    </ul>
+                </div>
+                <a href="src/html/app.html" class="btn" style="width: 100%; text-align: center;">Go Pro Now</a>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div style="flex: 1; min-width: 280px; max-width: 320px; background: rgba(15,23,42,0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; text-align: left; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.15); transition: transform 0.3s;">
+                <div>
+                    <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; margin-bottom: 8px; color: white;">Enterprise</h3>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 24px;">For merchants & business vendors.</p>
+                    <div style="font-size: 2.5rem; font-weight: 800; font-family: 'Outfit', sans-serif; margin-bottom: 24px; color: white;">Custom</div>
+                    <ul style="list-style: none; padding: 0; margin-bottom: 32px;">
+                        <li style="margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.8);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Multi-agent wallet control</li>
+                        <li style="margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.8);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Unlimited balance limits</li>
+                        <li style="margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.8);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> API integration keys</li>
+                    </ul>
+                </div>
+                <a href="src/html/contact.html" class="btn btn-secondary" style="width: 100%; text-align: center; border-color: rgba(255,255,255,0.2); background: transparent; color: white !important;">Contact Sales</a>
             </div>
         </div>
+    </section>
 
-        <!-- TRANSACTION HISTORY VIEW -->
-        <div id="transactionHistoryView" class="view">
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 style="margin-bottom: 0;">Transactions History</h3>
-                    <button class="nav-btn" id="exportCsvBtn" style="margin-left: 0;">Export CSV</button>
-                </div>
-
-                <!-- Filters & Search Toolbar -->
-                <div class="filters-toolbar">
-                    <div class="search-box">
-                        <input type="text" id="searchDescInput" class="form-input" placeholder="Search description...">
-                    </div>
-                    <div class="filter-row">
-                        <div>
-                            <label class="filter-label">Type</label>
-                            <select id="filterType" class="form-input filter-select">
-                                <option value="">All Types</option>
-                                <option value="credit">Credits (+)</option>
-                                <option value="debit">Debits (-)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="filter-label">Status</label>
-                            <select id="filterStatus" class="form-input filter-select">
-                                <option value="">All Statuses</option>
-                                <option value="completed">Completed</option>
-                                <option value="pending">Pending</option>
-                                <option value="failed">Failed</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="filter-row">
-                        <div>
-                            <label class="filter-label">From Date</label>
-                            <input type="date" id="filterFromDate" class="form-input">
-                        </div>
-                        <div>
-                            <label class="filter-label">To Date</label>
-                            <input type="date" id="filterToDate" class="form-input">
-                        </div>
-                    </div>
-                    <button type="button" class="preset-btn" id="clearFiltersBtn" style="width: 100%; margin-top: 8px;">Clear Filters</button>
-                </div>
-
-                <!-- Detailed Transactions Table/List -->
-                <div id="detailedTransactionsList" style="margin-top: 20px;">
-                    <!-- Loaded dynamically -->
-                </div>
-
-                <!-- Pagination controls -->
-                <div class="pagination-container" style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
-                    <button class="preset-btn" id="prevPageBtn" disabled>&larr; Prev</button>
-                    <span id="pageIndicator" style="font-size: 14px; font-weight: 600; color: var(--text-secondary);">Page 1 of 1</span>
-                    <button class="preset-btn" id="nextPageBtn" disabled>Next &rarr;</button>
-                </div>
-            </div>
+    <footer>
+        <div>
+            <a href="/" class="footer-logo">GarudaPay</a>
+            <p class="footer-text">Building the financial infrastructure for tomorrow's digital economy. Secure, fast, and remarkably simple.</p>
         </div>
-
-    </div>
-
-    <!-- TRANSACTION DETAILS MODAL -->
-    <div id="txDetailsModal" class="modal-overlay">
-        <div class="modal-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
-                <h3 style="margin-bottom: 0;">Transaction Details</h3>
-                <span id="closeTxModalBtn" class="close-modal-btn">&times;</span>
-            </div>
-            
-            <div class="modal-details-grid">
-                <div class="detail-row">
-                    <span class="detail-label">Reference ID:</span>
-                    <span id="detRefId" class="detail-val"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Status:</span>
-                    <span id="detStatus" class="detail-val"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Date & Time:</span>
-                    <span id="detDate" class="detail-val"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Type:</span>
-                    <span id="detType" class="detail-val"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Amount:</span>
-                    <span id="detAmount" class="detail-val"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Sender:</span>
-                    <span id="detSender" class="detail-val"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Receiver:</span>
-                    <span id="detReceiver" class="detail-val"></span>
-                </div>
-                <div class="detail-row" style="grid-column: span 2;">
-                    <span class="detail-label">Description:</span>
-                    <span id="detDescription" class="detail-val"></span>
-                </div>
-            </div>
+        <div class="footer-links">
+            <a href="src/html/about.html" class="hoverable">About Us</a>
+            <a href="src/html/contact.html" class="hoverable">Contact Support</a>
         </div>
-    </div>
+    </footer>
 
-    <script src="./src/js/app.js"></script>
+    <script>
+        // Card interactive tilt effect
+        const cardContainer = document.getElementById('canvas-card');
+        if (cardContainer) {
+            const card = cardContainer.querySelector('.premium-card');
+            cardContainer.addEventListener('mousemove', (e) => {
+                const rect = cardContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width/2;
+                const y = e.clientY - rect.top - rect.height/2;
+                const rX = -(y / (rect.height/2)) * 15; // Max 15deg rotation
+                const rY = (x / (rect.width/2)) * 15;
+                card.style.transform = `rotateX(${rX}deg) rotateY(${rY}deg)`;
+            });
+            cardContainer.addEventListener('mouseleave', () => {
+                card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+            });
+        }
+    </script>
 </body>
 </html>

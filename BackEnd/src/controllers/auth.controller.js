@@ -12,16 +12,16 @@ const issueTokenCookie = (res, userId) => {
     const token = jwt.sign(
         { id: userId },
         process.env.JWT_SECRET || "garudapay_secret_key_123",
-        { expiresIn: "7d" }
+        { expiresIn: "24h" }
     );
 
     res.cookie("token", token, {
         httpOnly: true, // browser JavaScript cannot read this cookie, it protects against XSS attacks
         secure: process.env.NODE_ENV === "production", // cookie only sent over HTTPS
-        sameSite: "strict", // strict means cookie is never sent
-        maxAge: 7 * 24 * 60 * 60 * 1000 // time for which the cookie is valid
-    })
-
+        sameSite: "lax", // lax allows cookie across ports on localhost
+        maxAge: 24 * 60 * 60 * 1000 // time for which the cookie is valid (24 hours)
+    });
+    return token;
 }
 
 // registering user
@@ -58,7 +58,7 @@ const register = async (req, res) => {
         const user = await User.create({ name, email, password });
 
         // this will log them in immidiately after signup
-        issueTokenCookie(res, user._id);
+        const token = issueTokenCookie(res, user._id);
 
         sendWelcomeEmail({
             to: user.email,
@@ -69,6 +69,7 @@ const register = async (req, res) => {
         res.status(201).json({
             success: true,
             message: "Account created successfully.",
+            token: token,
             user: {
                 id: user._id,
                 name: user.name,
@@ -116,12 +117,13 @@ const login = async (req, res) => {
             });
         }
 
-        issueTokenCookie(res, user._id);
+        const token = issueTokenCookie(res, user._id);
 
         // if everything wents well then this message is sent
         res.json({
             success: true,
             message: "Logged in successfully",
+            token: token,
             user: {
                 id: user._id,
                 name: user.name,
@@ -316,11 +318,12 @@ const resetPassword = async (req, res) => {
 
         await user.save();
 
-        issueTokenCookie(res, user._id);
+        const authToken = issueTokenCookie(res, user._id);
 
         res.json({
             success: true,
-            message: "Password reset successfully. You are now logged in."
+            message: "Password reset successfully. You are now logged in.",
+            token: authToken
         });
     } catch (e) {
         res.status(500).json({

@@ -10,6 +10,7 @@ const walletRoutes = require("./routes/wallet.routes");
 const contactRoutes = require("./routes/contact.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
 const notificationRoutes = require("./routes/notification.routes");
+const adminRoutes = require("./routes/admin.routes");
 const { connectDB } = require("./config/db");
 const path = require("path");
 
@@ -28,22 +29,43 @@ app.use("/api/wallet", walletRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Root route serves landing page
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../../FrontEnd/landing.html"));
+    res.sendFile(path.join(__dirname, "../../FrontEnd/index.html"));
 });
+
+// Serve Admin static files
+app.use("/admin", express.static(path.join(__dirname, "../../Admin")));
+app.use("/Admin", express.static(path.join(__dirname, "../../Admin")));
 
 // Serve FrontEnd static files
 app.use(express.static(path.join(__dirname, "../../FrontEnd")));
+app.use(express.static(path.join(__dirname, "../../FrontEnd/src")));
 
 // If any routes does not matches as per the request then this will run
 app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        message: `Route ${req.method} ${req.path} not found`
-    })
-})
+    if (req.path.startsWith("/api/")) {
+        return res.status(404).json({
+            success: false,
+            message: `Route ${req.method} ${req.path} not found`
+        });
+    }
+    res.status(404).sendFile(path.join(__dirname, "../../FrontEnd/404.html"));
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    if (req.path.startsWith("/api/")) {
+        return res.status(500).json({
+            success: false,
+            message: err.message || "Internal Server Error"
+        });
+    }
+    res.status(500).sendFile(path.join(__dirname, "../../FrontEnd/error.html"));
+});
 
 const PORT = process.env.PORT || 5055;
 

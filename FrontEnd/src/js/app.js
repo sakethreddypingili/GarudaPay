@@ -1,7 +1,17 @@
 // --- Base API Configuration ---
-const API_URL = '/api/wallet';
-const AUTH_API_URL = '/api/auth';
-const TX_API_URL = '/api/transaction';
+const BACKEND_BASE = window.location.port === '5055' ? '' : 'http://localhost:5055';
+const API_URL = `${BACKEND_BASE}/api/wallet`;
+const AUTH_API_URL = `${BACKEND_BASE}/api/auth`;
+const TX_API_URL = `${BACKEND_BASE}/api/transaction`;
+
+function getAuthHeaders(headers = {}) {
+    const token = localStorage.getItem('token');
+    const newHeaders = { ...headers };
+    if (token) {
+        newHeaders['Authorization'] = `Bearer ${token}`;
+    }
+    return newHeaders;
+}
 
 // --- State Variables ---
 let currentBalance = 0.00;
@@ -15,9 +25,9 @@ let historyFilters = { page: 1, limit: 10, type: '', status: '', from: '', to: '
 const balanceText = document.getElementById('balanceText');
 const transactionsList = document.getElementById('transactionsList');
 
-// Navigation Bars
-const navGuest = document.getElementById('navGuest');
-const navUser = document.getElementById('navUser');
+// Navigation layouts
+const guestAuthContainer = document.getElementById('guestAuthContainer');
+const appDashboardLayout = document.getElementById('appDashboardLayout');
 
 // Views
 const dashboardView = document.getElementById('dashboardView');
@@ -28,16 +38,37 @@ const forgotPasswordView = document.getElementById('forgotPasswordView');
 const resetPasswordView = document.getElementById('resetPasswordView');
 const transactionHistoryView = document.getElementById('transactionHistoryView');
 const txDetailsModal = document.getElementById('txDetailsModal');
+const sendMoneyView = document.getElementById('sendMoneyView');
+const transferReceiptView = document.getElementById('transferReceiptView');
+
+// Send Money Elements
+const sendMoneyForm = document.getElementById('sendMoneyForm');
+const sendRecipientInput = document.getElementById('sendRecipientInput');
+const sendAmountInput = document.getElementById('sendAmountInput');
+const sendMoneySubmitBtn = document.getElementById('sendMoneySubmitBtn');
+const txReceiptRefId = document.getElementById('txReceiptRefId');
+const txReceiptAmount = document.getElementById('txReceiptAmount');
+const txReceiptRecipient = document.getElementById('txReceiptRecipient');
+const txReceiptDate = document.getElementById('txReceiptDate');
+const txReceiptDoneBtn = document.getElementById('txReceiptDoneBtn');
 
 // Tabs/Buttons
 const toDashboardBtn = document.getElementById('toDashboardBtn');
 const toTopUpBtn = document.getElementById('toTopUpBtn');
+const toSendMoneyBtn = document.getElementById('toSendMoneyBtn');
 const quickAddBtn = document.getElementById('quickAddBtn');
 const finishBtn = document.getElementById('finishBtn');
 const toLoginBtn = document.getElementById('toLoginBtn');
 const toRegisterBtn = document.getElementById('toRegisterBtn');
 const toHistoryBtn = document.getElementById('toHistoryBtn');
 const logoutBtn = document.getElementById('logoutBtn');
+
+// Sidebar Nav Links
+const sideNavDashboard = document.getElementById('sideNavDashboard');
+const sideNavTopUp = document.getElementById('sideNavTopUp');
+const sideNavSend = document.getElementById('sideNavSend');
+const sideNavHistory = document.getElementById('sideNavHistory');
+const sideNavLogout = document.getElementById('sideNavLogout');
 const exportCsvBtn = document.getElementById('exportCsvBtn');
 const clearFiltersBtn = document.getElementById('clearFiltersBtn');
 const prevPageBtn = document.getElementById('prevPageBtn');
@@ -133,6 +164,15 @@ function hideAllViews() {
     forgotPasswordView.classList.remove('active');
     resetPasswordView.classList.remove('active');
     transactionHistoryView.classList.remove('active');
+    if (sendMoneyView) sendMoneyView.classList.remove('active');
+    if (transferReceiptView) transferReceiptView.classList.remove('active');
+}
+
+function showSendMoney() {
+    hideAllViews();
+    if (sendMoneyView) sendMoneyView.classList.add('active');
+    if (sendRecipientInput) sendRecipientInput.value = '';
+    if (sendAmountInput) sendAmountInput.value = '';
 }
 
 function showDashboard() {
@@ -225,22 +265,49 @@ async function showHistory() {
 // --- Session & Navigation State Update ---
 function updateNavbar() {
     if (currentUser) {
-        navGuest.style.display = 'none';
-        navUser.style.display = 'flex';
+        if (guestAuthContainer) guestAuthContainer.style.display = 'none';
+        if (appDashboardLayout) appDashboardLayout.style.display = 'grid';
     } else {
-        navGuest.style.display = 'flex';
-        navUser.style.display = 'none';
+        if (guestAuthContainer) guestAuthContainer.style.display = 'block';
+        if (appDashboardLayout) appDashboardLayout.style.display = 'none';
     }
+}
+
+function updateSidebarActiveLink(activeId) {
+    const links = document.querySelectorAll('.side-nav a');
+    links.forEach(link => {
+        if (link.id === activeId) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
 }
 
 async function checkSession() {
     try {
-        const res = await fetch(`${AUTH_API_URL}/me`, { credentials: 'include' });
+        const res = await fetch(`${AUTH_API_URL}/me`, { 
+            headers: getAuthHeaders(),
+            credentials: 'include' 
+        });
         if (res.ok) {
             const data = await res.json();
             currentUser = data.user;
             updateNavbar();
-            showDashboard();
+            const hash = window.location.hash;
+            if (hash === '#topup') {
+                showTopUp();
+                updateSidebarActiveLink('sideNavTopUp');
+            } else if (hash === '#send') {
+                showSendMoney();
+                updateSidebarActiveLink('sideNavSend');
+            } else if (hash === '#transactions') {
+                showHistory();
+                updateSidebarActiveLink('sideNavHistory');
+            } else {
+                showDashboard();
+                updateSidebarActiveLink('sideNavTopUp');
+            }
         } else {
             currentUser = null;
             updateNavbar();
@@ -274,6 +341,7 @@ async function handleLogin(e) {
         
         const data = await res.json();
         if (res.ok && data.success) {
+            if (data.token) localStorage.setItem('token', data.token);
             currentUser = data.user;
             updateNavbar();
             window.location.href = "dashboard.html";
@@ -302,6 +370,7 @@ async function handleRegister(e) {
         
         const data = await res.json();
         if (res.ok && data.success) {
+            if (data.token) localStorage.setItem('token', data.token);
             currentUser = data.user;
             updateNavbar();
             window.location.href = "dashboard.html";
@@ -316,10 +385,15 @@ async function handleRegister(e) {
 
 async function handleLogout() {
     try {
-        await fetch(`${AUTH_API_URL}/logout`, { method: 'POST', credentials: 'include' });
+        await fetch(`${AUTH_API_URL}/logout`, { 
+            method: 'POST', 
+            headers: getAuthHeaders(),
+            credentials: 'include' 
+        });
     } catch (err) {
         console.error('Logout API call failed:', err);
     }
+    localStorage.removeItem('token');
     currentUser = null;
     updateNavbar();
     showLogin();
@@ -332,7 +406,7 @@ async function handleForgotPassword(e) {
     try {
         const res = await fetch(`${AUTH_API_URL}/forgot-password`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({ email }),
             credentials: 'include'
         });
@@ -378,6 +452,7 @@ async function handleResetPassword(e) {
         
         const data = await res.json();
         if (res.ok && data.success) {
+            if (data.token) localStorage.setItem('token', data.token);
             alert('Password reset successfully! You are now logged in.');
             window.history.replaceState({}, document.title, window.location.pathname);
             checkSession();
@@ -402,7 +477,10 @@ async function fetchTransactionHistory() {
         if (historyFilters.to) params.append('to', historyFilters.to);
         if (historyFilters.search) params.append('search', historyFilters.search);
         
-        const res = await fetch(`${TX_API_URL}/history?${params.toString()}`, { credentials: 'include' });
+        const res = await fetch(`${TX_API_URL}/history?${params.toString()}`, { 
+            headers: getAuthHeaders(),
+            credentials: 'include' 
+        });
         const data = await res.json();
         
         if (res.ok && data.success) {
@@ -583,14 +661,115 @@ function checkResetToken() {
 // --- Event Handlers ---
 
 // Switch view events
-toDashboardBtn.addEventListener('click', showDashboard);
-toTopUpBtn.addEventListener('click', showTopUp);
-quickAddBtn.addEventListener('click', showTopUp);
-finishBtn.addEventListener('click', showDashboard);
-toLoginBtn.addEventListener('click', showLogin);
-toRegisterBtn.addEventListener('click', showRegister);
-toHistoryBtn.addEventListener('click', showHistory);
-logoutBtn.addEventListener('click', handleLogout);
+if (toDashboardBtn) toDashboardBtn.addEventListener('click', showDashboard);
+if (toTopUpBtn) toTopUpBtn.addEventListener('click', showTopUp);
+if (toSendMoneyBtn) toSendMoneyBtn.addEventListener('click', showSendMoney);
+if (quickAddBtn) quickAddBtn.addEventListener('click', showTopUp);
+if (finishBtn) finishBtn.addEventListener('click', showDashboard);
+if (txReceiptDoneBtn) txReceiptDoneBtn.addEventListener('click', showDashboard);
+if (toLoginBtn) toLoginBtn.addEventListener('click', showLogin);
+if (toRegisterBtn) toRegisterBtn.addEventListener('click', showRegister);
+if (toHistoryBtn) toHistoryBtn.addEventListener('click', showHistory);
+if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+
+// Sidebar Nav click handlers
+if (sideNavTopUp) {
+    sideNavTopUp.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.hash = '#topup';
+        showTopUp();
+        updateSidebarActiveLink('sideNavTopUp');
+    });
+}
+if (sideNavSend) {
+    sideNavSend.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.hash = '#send';
+        showSendMoney();
+        updateSidebarActiveLink('sideNavSend');
+    });
+}
+if (sideNavHistory) {
+    sideNavHistory.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location.hash = '#transactions';
+        showHistory();
+        updateSidebarActiveLink('sideNavHistory');
+    });
+}
+if (sideNavLogout) {
+    sideNavLogout.addEventListener('click', (e) => {
+        e.preventDefault();
+        handleLogout();
+    });
+}
+
+// Global hash change listener
+window.addEventListener('hashchange', () => {
+    if (!currentUser) return;
+    const hash = window.location.hash;
+    if (hash === '#topup') {
+        showTopUp();
+        updateSidebarActiveLink('sideNavTopUp');
+    } else if (hash === '#send') {
+        showSendMoney();
+        updateSidebarActiveLink('sideNavSend');
+    } else if (hash === '#transactions') {
+        showHistory();
+        updateSidebarActiveLink('sideNavHistory');
+    } else {
+        showDashboard();
+        updateSidebarActiveLink('sideNavTopUp');
+    }
+});
+
+// Send Money Submit Listener
+if (sendMoneyForm) {
+    sendMoneyForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const recipient = sendRecipientInput.value.trim();
+        const amount = parseFloat(sendAmountInput.value);
+
+        if (!recipient || isNaN(amount) || amount <= 0) {
+            alert('Please enter valid recipient and amount.');
+            return;
+        }
+
+        if (sendMoneySubmitBtn) {
+            sendMoneySubmitBtn.innerText = 'Sending...';
+            sendMoneySubmitBtn.disabled = true;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/transfer`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount, recipient }),
+                credentials: 'include'
+            });
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                hideAllViews();
+                if (transferReceiptView) transferReceiptView.classList.add('active');
+                if (txReceiptRefId) txReceiptRefId.innerText = data.data.reference || data.data._id || 'N/A';
+                if (txReceiptAmount) txReceiptAmount.innerText = '₹' + amount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                if (txReceiptRecipient) txReceiptRecipient.innerText = recipient;
+                if (txReceiptDate) txReceiptDate.innerText = new Date().toLocaleString('en-IN');
+            } else {
+                alert('Transfer failed: ' + (data.error || data.message || 'Unknown error'));
+            }
+        } catch (err) {
+            console.error('Transfer error:', err);
+            alert('An error occurred while executing the transfer.');
+        } finally {
+            if (sendMoneySubmitBtn) {
+                sendMoneySubmitBtn.innerText = 'Send Funds Now';
+                sendMoneySubmitBtn.disabled = false;
+            }
+        }
+    });
+}
 
 // View navigation links
 linkForgotPassword.addEventListener('click', (e) => { e.preventDefault(); showForgotPassword(); });
@@ -631,9 +810,10 @@ topupForm.addEventListener('submit', async (event) => {
     try {
         const response = await fetch(`${API_URL}/topup`, {
             method: 'POST',
-            headers: {
+            headers: getAuthHeaders({
                 'Content-Type': 'application/json'
-            },
+            }),
+            credentials: 'include',
             body: JSON.stringify({ amount, method })
         });
 
