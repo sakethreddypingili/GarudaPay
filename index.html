@@ -26,36 +26,7 @@
             overflow-x: hidden; 
         }
 
-        /* Background floating decorations */
-        .bg-decorations {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: 1; /* Floats above background colors but behind content */
-        }
-        .bg-float {
-            position: absolute;
-            top: 0;
-            font-size: 32px;
-            color: rgba(37, 99, 235, 0.35);
-            text-shadow: 0 0 8px rgba(37, 99, 235, 0.25);
-            animation: floatDecor var(--float-dur, 15s) infinite linear;
-            user-select: none;
-            will-change: transform;
-        }
-        .bg-float::before, .bg-float::after {
-            content: attr(data-char);
-            position: absolute;
-            opacity: 0.6;
-        }
-        .bg-float::before { left: -35px; top: -50px; transform: scale(0.8) rotate(15deg); }
-        .bg-float::after { right: -40px; bottom: -70px; transform: scale(0.65) rotate(-20deg); }
-        @keyframes floatDecor {
-            0% { transform: translateY(105vh) rotate(0deg); }
-            100% { transform: translateY(-10vh) rotate(360deg); }
-        }
+
         
         /* Navigation */
         header { 
@@ -116,7 +87,7 @@
 
         /* Footer */
         footer {
-            padding: 60px 10%; background: #ffffff; display: flex; justify-content: space-between; 
+            padding: 40px 10%; background: #ffffff; display: flex; justify-content: space-between; 
             align-items: center; border-top: 1px solid var(--border);
         }
         .footer-logo { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 24px; color: var(--primary); text-decoration: none; }
@@ -630,19 +601,18 @@
         @keyframes fadeInPoint {
             to { opacity: 1; }
         }
+        /* Contact Section Styles */
+        .contact-grid { display: flex; flex-direction: column; gap: 40px; width: 100%; max-width: 800px; margin: 0 auto; }
+        .contact-info-row { display: flex; gap: 20px; justify-content: space-between; flex-wrap: wrap; width: 100%; }
+        .contact-card { flex: 1; min-width: 230px; background: white; border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .contact-icon { background: var(--primary-light); color: var(--primary); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; }
+        .contact-form { width: 100%; max-width: 600px; margin: 0 auto; background: white; border: 1px solid var(--border); border-radius: 16px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-input { padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.95rem; }
     </style>
 </head>
 <body>
-    <!-- Background Floating Decorations (7 elements generating 21 visible currencies) -->
-    <div class="bg-decorations">
-        <div class="bg-float" data-char="₹" style="left: 10%; --float-dur: 13s; animation-delay: 0s;">₹</div>
-        <div class="bg-float" data-char="$" style="left: 30%; --float-dur: 16s; animation-delay: -4s;">$</div>
-        <div class="bg-float" data-char="€" style="left: 50%; --float-dur: 18s; animation-delay: -8s;">€</div>
-        <div class="bg-float" data-char="£" style="left: 70%; --float-dur: 15s; animation-delay: -2s;">£</div>
-        <div class="bg-float" data-char="¥" style="left: 90%; --float-dur: 20s; animation-delay: -10s;">¥</div>
-        <div class="bg-float" data-char="₹" style="left: 20%; --float-dur: 22s; animation-delay: -6s;">₹</div>
-        <div class="bg-float" data-char="$" style="left: 80%; --float-dur: 17s; animation-delay: -12s;">$</div>
-    </div>
+
 
     <header>
         <a href="/" class="logo">
@@ -650,12 +620,12 @@
             GarudaPay
         </a>
         <div class="nav-links">
+            <a href="#security" class="hoverable">Security</a>
             <a href="#features" class="hoverable">Features</a>
             <a href="#pricing" class="hoverable">Pricing</a>
-            <a href="#security" class="hoverable">Security</a>
-            <a href="src/html/about.html" class="hoverable">About Us</a>
-            <a href="src/html/contact.html" class="hoverable">Support</a>
-            <a href="src/html/app.html" class="btn hoverable">Open Dashboard</a>
+            <a href="#about" class="hoverable">About Us</a>
+            <a href="#contact" class="hoverable">Support</a>
+            <a href="src/html/app.html" class="btn hoverable">Get Started</a>
         </div>
     </header>
 
@@ -842,7 +812,7 @@
     </section>
 
     <!-- 5. Pricing Section -->
-    <section id="pricing" style="background: radial-gradient(circle at right center, rgba(37,99,235,0.03), transparent 60%); padding: 80px 10%; flex-direction: column; text-align: center; min-height: auto;">
+    <section id="pricing" style="background: radial-gradient(circle at right center, rgba(37,99,235,0.03), transparent 60%); padding: 48px 10%; flex-direction: column; text-align: center; min-height: auto;">
         <div class="badge" style="background: #eff6ff; color: #2563eb; margin: 0 auto 20px auto;">Pricing Plans</div>
         <h2 style="margin-bottom: 16px;">Transparent, flat rates.</h2>
         <p class="lead" style="margin: 0 auto 48px auto;">No hidden commissions. Choose the tier that matches your monthly volume.</p>
@@ -891,8 +861,93 @@
                         <li style="margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.8);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> API integration keys</li>
                     </ul>
                 </div>
-                <a href="src/html/contact.html" class="btn btn-secondary" style="width: 100%; text-align: center; border-color: rgba(255,255,255,0.2); background: transparent; color: white !important;">Contact Sales</a>
+                <a href="#contact" class="btn btn-secondary" style="width: 100%; text-align: center; border-color: rgba(255,255,255,0.2); background: transparent; color: white !important;">Contact Sales</a>
             </div>
+        </div>
+    </section>
+
+    <!-- 6. About Us Section -->
+    <section id="about" style="background: #ffffff; border-top: 1px solid var(--border); padding: 48px 10%; flex-direction: column; align-items: center; text-align: center; min-height: auto;">
+        <div class="badge" style="background: #f0fdf4; color: #10b981; margin: 0 auto 20px auto;">About GarudaPay</div>
+        <h2 style="margin-bottom: 20px;">Digital payments built for real needs.</h2>
+        <p class="lead" style="margin: 0 auto 48px auto; max-width: 800px;">GarudaPay is India's premier digital wallet, designed to replace clunky banking interfaces with a unified, high-performance financial experience.</p>
+        
+        <div style="display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 1000px; margin: 0 auto;">
+            <div style="flex: 1; min-width: 280px; background: rgba(255,255,255,0.6); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-align: left; box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
+                <div style="font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 12px;">01</div>
+                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; margin-bottom: 8px;">Our Mission</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">To provide secure, fast, and beginner-friendly digital payment tools for users and merchants across India.</p>
+            </div>
+            <div style="flex: 1; min-width: 280px; background: rgba(255,255,255,0.6); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-align: left; box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
+                <div style="font-size: 2rem; font-weight: 800; color: #10b981; margin-bottom: 12px;">02</div>
+                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; margin-bottom: 8px;">Our Vision</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">To build a trusted financial space where sending, tracking, and managing wealth is completely seamless.</p>
+            </div>
+            <div style="flex: 1; min-width: 280px; background: rgba(255,255,255,0.6); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-align: left; box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
+                <div style="font-size: 2rem; font-weight: 800; color: #a855f7; margin-bottom: 12px;">03</div>
+                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; margin-bottom: 8px;">Our Values</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">Security, simplicity, integrity, and performance are the core tenets that guide every feature we release.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Support/Contact Section -->
+    <section id="contact" style="background: radial-gradient(circle at left center, rgba(37,99,235,0.03), transparent 60%); border-top: 1px solid var(--border); padding: 48px 10%; flex-direction: column; align-items: center; min-height: auto; width: 100%;">
+        <div class="badge" style="background: #fdf4ff; color: #a855f7; margin: 0 auto 20px auto;">Support Centre</div>
+        <h2 style="margin-bottom: 16px; text-align: center;">Get in touch.</h2>
+        <p class="lead" style="margin: 0 auto 48px auto; text-align: center; max-width: 600px;">Have questions? Our support team is ready to assist you. Send us a message below.</p>
+        
+        <div class="contact-grid">
+            <!-- Contact Info Row -->
+            <div class="contact-info-row">
+                <div class="contact-card">
+                    <div class="contact-icon" style="background: var(--primary-light); color: var(--primary);">@</div>
+                    <h4 style="font-family: 'Outfit', sans-serif; font-size: 1.1rem;">Email Support</h4>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">support@garudapay.com</p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon" style="background: #e6fcf5; color: #059669;">+</div>
+                    <h4 style="font-family: 'Outfit', sans-serif; font-size: 1.1rem;">Phone Support</h4>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">+91 98765 43210</p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon" style="background: #fdf2f8; color: #db2777;">IN</div>
+                    <h4 style="font-family: 'Outfit', sans-serif; font-size: 1.1rem;">Office Location</h4>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Bengaluru, India</p>
+                </div>
+            </div>
+            
+            <!-- Contact Form -->
+            <form class="contact-form" id="contactForm">
+                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; text-align: center; margin-bottom: 8px;">Send a Message</h3>
+                
+                <div class="form-group">
+                    <label for="name" style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your name" class="form-input">
+                    <small class="error-message" id="nameError" style="color: #ef4444; font-size: 0.8rem;"></small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" class="form-input">
+                    <small class="error-message" id="emailError" style="color: #ef4444; font-size: 0.8rem;"></small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject" style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Subject</label>
+                    <input type="text" id="subject" name="subject" placeholder="Enter subject" class="form-input">
+                    <small class="error-message" id="subjectError" style="color: #ef4444; font-size: 0.8rem;"></small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message" style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Message</label>
+                    <textarea id="message" name="message" rows="4" placeholder="Write your message" class="form-input" style="resize: vertical;"></textarea>
+                    <small class="error-message" id="messageError" style="color: #ef4444; font-size: 0.8rem;"></small>
+                </div>
+                
+                <button type="submit" class="btn hoverable" id="submitButton" style="width: 100%; text-align: center; border: none; cursor: pointer; font-size: 1rem; padding: 14px;">Submit Message</button>
+                <p id="formStatus" style="font-weight: 600; font-size: 0.9rem; text-align: center; margin-top: 8px;"></p>
+            </form>
         </div>
     </section>
 
@@ -902,8 +957,8 @@
             <p class="footer-text">Building the financial infrastructure for tomorrow's digital economy. Secure, fast, and remarkably simple.</p>
         </div>
         <div class="footer-links">
-            <a href="src/html/about.html" class="hoverable">About Us</a>
-            <a href="src/html/contact.html" class="hoverable">Contact Support</a>
+            <a href="#about" class="hoverable">About Us</a>
+            <a href="#contact" class="hoverable">Contact Support</a>
         </div>
     </footer>
 
@@ -922,6 +977,83 @@
             });
             cardContainer.addEventListener('mouseleave', () => {
                 card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+            });
+        }
+
+        // Contact form handling on landing page
+        const contactForm = document.getElementById("contactForm");
+        const formStatus = document.getElementById("formStatus");
+        const submitButton = document.getElementById("submitButton");
+        
+        if (contactForm) {
+            contactForm.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const name = document.getElementById("name").value.trim();
+                const email = document.getElementById("email").value.trim();
+                const subject = document.getElementById("subject").value.trim();
+                const message = document.getElementById("message").value.trim();
+                let isValid = true;
+
+                // Clear previous errors
+                document.getElementById("nameError").textContent = "";
+                document.getElementById("emailError").textContent = "";
+                document.getElementById("subjectError").textContent = "";
+                document.getElementById("messageError").textContent = "";
+                formStatus.textContent = "";
+
+                if (name === "") {
+                    document.getElementById("nameError").textContent = "Please enter your name.";
+                    isValid = false;
+                }
+                if (email === "") {
+                    document.getElementById("emailError").textContent = "Please enter your email.";
+                    isValid = false;
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    document.getElementById("emailError").textContent = "Please enter a valid email address.";
+                    isValid = false;
+                }
+                if (subject === "") {
+                    document.getElementById("subjectError").textContent = "Please enter a subject.";
+                    isValid = false;
+                }
+                if (message === "") {
+                    document.getElementById("messageError").textContent = "Please enter your message.";
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    try {
+                        submitButton.textContent = "Sending...";
+                        submitButton.disabled = true;
+
+                        const BACKEND_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '5055' ? 'http://localhost:5055' : '';
+                        const response = await fetch(BACKEND_BASE + "/api/contact", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ name, email, subject, message })
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            formStatus.textContent = result.message;
+                            formStatus.style.color = "#10b981";
+                            contactForm.reset();
+                        } else {
+                            formStatus.textContent = result.message;
+                            formStatus.style.color = "#ef4444";
+                        }
+                    } catch (error) {
+                        formStatus.textContent = "Please start the backend server and try again.";
+                        formStatus.style.color = "#ef4444";
+                    }
+
+                    submitButton.textContent = "Submit Message";
+                    submitButton.disabled = false;
+                }
             });
         }
     </script>

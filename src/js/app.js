@@ -1,5 +1,5 @@
 // --- Base API Configuration ---
-const BACKEND_BASE = window.location.hostname === 'localhost' && window.location.port !== '5055' ? 'http://localhost:5055' : '';
+const BACKEND_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '5055' ? 'http://localhost:5055' : '';
 const API_URL = `${BACKEND_BASE}/api/wallet`;
 const AUTH_API_URL = `${BACKEND_BASE}/api/auth`;
 const TX_API_URL = `${BACKEND_BASE}/api/transaction`;
@@ -157,13 +157,13 @@ async function fetchWalletState() {
 
 // --- Helper Functions ---
 function hideAllViews() {
-    dashboardView.classList.remove('active');
-    topupView.classList.remove('active');
-    loginView.classList.remove('active');
-    registerView.classList.remove('active');
-    forgotPasswordView.classList.remove('active');
-    resetPasswordView.classList.remove('active');
-    transactionHistoryView.classList.remove('active');
+    if (dashboardView) dashboardView.classList.remove('active');
+    if (topupView) topupView.classList.remove('active');
+    if (loginView) loginView.classList.remove('active');
+    if (registerView) registerView.classList.remove('active');
+    if (forgotPasswordView) forgotPasswordView.classList.remove('active');
+    if (resetPasswordView) resetPasswordView.classList.remove('active');
+    if (transactionHistoryView) transactionHistoryView.classList.remove('active');
     if (sendMoneyView) sendMoneyView.classList.remove('active');
     if (transferReceiptView) transferReceiptView.classList.remove('active');
 }
@@ -177,87 +177,91 @@ function showSendMoney() {
 
 function showDashboard() {
     hideAllViews();
-    dashboardView.classList.add('active');
+    if (dashboardView) dashboardView.classList.add('active');
     fetchWalletState();
 }
 
 function showTopUp() {
     hideAllViews();
-    dashboardView.classList.remove('active');
-    topupView.classList.add('active');
+    if (dashboardView) dashboardView.classList.remove('active');
+    if (topupView) topupView.classList.add('active');
     
     // Reset Top-up form status
-    topupFormContainer.classList.add('active');
-    loadingState.classList.remove('active');
-    successState.classList.remove('active');
-    amountInput.value = '1000';
+    if (topupFormContainer) topupFormContainer.classList.add('active');
+    if (loadingState) loadingState.classList.remove('active');
+    if (successState) successState.classList.remove('active');
+    if (amountInput) amountInput.value = '1000';
 }
 
 function renderUI() {
     // 1. Display updated balance
-    balanceText.innerText = '₹' + currentBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (balanceText) {
+        balanceText.innerText = '₹' + currentBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
     
     // 2. Display transactions list
-    transactionsList.innerHTML = '';
-    
-    if (transactions.length === 0) {
-        transactionsList.innerHTML = '<div class="no-transactions">No recent transactions found.</div>';
-        return;
-    }
-
-    for (let i = 0; i < transactions.length; i++) {
-        let tx = transactions[i];
-        let itemClass = tx.amount > 0 ? 'tx-positive' : 'tx-negative';
-        let prefix = tx.amount > 0 ? '+' : '';
+    if (transactionsList) {
+        transactionsList.innerHTML = '';
         
-        transactionsList.innerHTML += `
-            <div class="list-item txn-row" onclick="openTxDetails('${tx.transactionId}')">
-            <div class="list-item">
-                <div>
-                    <strong>${tx.title}</strong>
-                    <br><small style="color: #888;">${tx.date}</small>
+        if (transactions.length === 0) {
+            transactionsList.innerHTML = '<div class="no-transactions">No recent transactions found.</div>';
+            return;
+        }
+
+        for (let i = 0; i < transactions.length; i++) {
+            let tx = transactions[i];
+            let itemClass = tx.amount > 0 ? 'tx-positive' : 'tx-negative';
+            let prefix = tx.amount > 0 ? '+' : '';
+            
+            transactionsList.innerHTML += `
+                <div class="list-item txn-row" onclick="openTxDetails('${tx.transactionId}')">
+                <div class="list-item">
+                    <div>
+                        <strong>${tx.title}</strong>
+                        <br><small style="color: #888;">${tx.date}</small>
+                    </div>
+                    <div class="${itemClass}">
+                        ${prefix}₹${Math.abs(tx.amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
                 </div>
-                <div class="${itemClass}">
-                    ${prefix}₹${Math.abs(tx.amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </div>
-            </div>
-        `;
+            `;
+        }
     }
 }
 
 // --- Navigation Helpers ---
 function showLogin() {
     hideAllViews();
-    loginView.classList.add('active');
-    loginEmail.value = '';
-    loginPassword.value = '';
+    if (loginView) loginView.classList.add('active');
+    if (loginEmail) loginEmail.value = '';
+    if (loginPassword) loginPassword.value = '';
 }
 
 function showRegister() {
     hideAllViews();
-    registerView.classList.add('active');
-    registerName.value = '';
-    registerEmail.value = '';
-    registerPassword.value = '';
+    if (registerView) registerView.classList.add('active');
+    if (registerName) registerName.value = '';
+    if (registerEmail) registerEmail.value = '';
+    if (registerPassword) registerPassword.value = '';
 }
 
 function showForgotPassword() {
     hideAllViews();
-    forgotPasswordView.classList.add('active');
-    forgotEmail.value = '';
-    forgotPasswordDebugContainer.style.display = 'none';
+    if (forgotPasswordView) forgotPasswordView.classList.add('active');
+    if (forgotEmail) forgotEmail.value = '';
+    if (forgotPasswordDebugContainer) forgotPasswordDebugContainer.style.display = 'none';
 }
 
 function showResetPassword(tokenVal = '') {
     hideAllViews();
-    resetPasswordView.classList.add('active');
-    resetToken.value = tokenVal;
-    resetPasswordInput.value = '';
+    if (resetPasswordView) resetPasswordView.classList.add('active');
+    if (resetToken) resetToken.value = tokenVal;
+    if (resetPasswordInput) resetPasswordInput.value = '';
 }
 
 async function showHistory() {
     hideAllViews();
-    transactionHistoryView.classList.add('active');
+    if (transactionHistoryView) transactionHistoryView.classList.add('active');
     historyFilters.page = 1;
     await fetchTransactionHistory();
 }
@@ -772,143 +776,166 @@ if (sendMoneyForm) {
 }
 
 // View navigation links
-linkForgotPassword.addEventListener('click', (e) => { e.preventDefault(); showForgotPassword(); });
-linkRegister.addEventListener('click', (e) => { e.preventDefault(); showRegister(); });
-linkLogin.addEventListener('click', (e) => { e.preventDefault(); showLogin(); });
-linkBackToLogin1.addEventListener('click', (e) => { e.preventDefault(); showLogin(); });
-linkBackToLogin2.addEventListener('click', (e) => { e.preventDefault(); showLogin(); });
+if (linkForgotPassword) linkForgotPassword.addEventListener('click', (e) => { e.preventDefault(); showForgotPassword(); });
+if (linkRegister) linkRegister.addEventListener('click', (e) => { e.preventDefault(); showRegister(); });
+if (linkLogin) linkLogin.addEventListener('click', (e) => { e.preventDefault(); showLogin(); });
+if (linkBackToLogin1) linkBackToLogin1.addEventListener('click', (e) => { e.preventDefault(); showLogin(); });
+if (linkBackToLogin2) linkBackToLogin2.addEventListener('click', (e) => { e.preventDefault(); showLogin(); });
 
 // Auth form submissions
-loginForm.addEventListener('submit', handleLogin);
-registerForm.addEventListener('submit', handleRegister);
-forgotPasswordForm.addEventListener('submit', handleForgotPassword);
-resetPasswordForm.addEventListener('submit', handleResetPassword);
+if (loginForm) loginForm.addEventListener('submit', handleLogin);
+if (registerForm) registerForm.addEventListener('submit', handleRegister);
+if (forgotPasswordForm) forgotPasswordForm.addEventListener('submit', handleForgotPassword);
+if (resetPasswordForm) resetPasswordForm.addEventListener('submit', handleResetPassword);
 
 // Preset amount helper buttons
-presetButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        amountInput.value = button.getAttribute('data-val');
+if (presetButtons) {
+    presetButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            if (amountInput) amountInput.value = button.getAttribute('data-val');
+        });
     });
-});
+}
 
 // Process Top-Up Form submission
-topupForm.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Stop page reload
-    
-    let amount = parseFloat(amountInput.value);
-    let method = methodSelect.value;
-    
-    if (isNaN(amount) || amount <= 0) {
-        alert('Please enter a valid amount.');
-        return;
-    }
-    
-    // Step 1: Show loading screen
-    topupFormContainer.classList.remove('active');
-    loadingState.classList.add('active');
-    
-    try {
-        const response = await fetch(`${API_URL}/topup`, {
-            method: 'POST',
-            headers: getAuthHeaders({
-                'Content-Type': 'application/json'
-            }),
-            credentials: 'include',
-            body: JSON.stringify({ amount, method })
-        });
-
-        if (!response.ok) {
-            throw new Error('Top-up failed');
+if (topupForm) {
+    topupForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Stop page reload
+        
+        if (!amountInput || !methodSelect) return;
+        let amount = parseFloat(amountInput.value);
+        let method = methodSelect.value;
+        
+        if (isNaN(amount) || amount <= 0) {
+            alert('Please enter a valid amount.');
+            return;
         }
+        
+        // Step 1: Show loading screen
+        if (topupFormContainer) topupFormContainer.classList.remove('active');
+        if (loadingState) loadingState.classList.add('active');
+        
+        try {
+            const response = await fetch(`${API_URL}/topup`, {
+                method: 'POST',
+                headers: getAuthHeaders({
+                    'Content-Type': 'application/json'
+                }),
+                credentials: 'include',
+                body: JSON.stringify({ amount, method })
+            });
 
-        const data = await response.json();
-        const newTx = data.transaction;
-        currentBalance = data.newBalance;
+            if (!response.ok) {
+                throw new Error('Top-up failed');
+            }
 
-        // Populate receipt
-        receiptTxId.innerText = newTx.transactionId;
-        receiptAmount.innerText = '₹' + amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        receiptMethod.innerText = method;
-        receiptDate.innerText = newTx.date;
+            const data = await response.json();
+            const newTx = data.transaction;
+            currentBalance = data.newBalance;
 
-        // Switch to success screen state
-        loadingState.classList.remove('active');
-        successState.classList.add('active');
-    } catch (error) {
-        alert('Transaction failed. Please try again.');
-        console.error(error);
-        showTopUp();
-    }
-});
+            // Populate receipt
+            if (receiptTxId) receiptTxId.innerText = newTx.transactionId;
+            if (receiptAmount) receiptAmount.innerText = '₹' + amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            if (receiptMethod) receiptMethod.innerText = method;
+            if (receiptDate) receiptDate.innerText = newTx.date;
+
+            // Switch to success screen state
+            if (loadingState) loadingState.classList.remove('active');
+            if (successState) successState.classList.add('active');
+        } catch (error) {
+            alert('Transaction failed. Please try again.');
+            console.error(error);
+            showTopUp();
+        }
+    });
+}
 
 // Transaction History search & filter events
-searchDescInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        historyFilters.search = searchDescInput.value.trim();
+if (searchDescInput) {
+    searchDescInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            historyFilters.search = searchDescInput.value.trim();
+            historyFilters.page = 1;
+            fetchTransactionHistory();
+        }
+    });
+}
+
+if (filterType) {
+    filterType.addEventListener('change', () => {
+        historyFilters.type = filterType.value;
         historyFilters.page = 1;
         fetchTransactionHistory();
-    }
-});
+    });
+}
 
-filterType.addEventListener('change', () => {
-    historyFilters.type = filterType.value;
-    historyFilters.page = 1;
-    fetchTransactionHistory();
-});
+if (filterStatus) {
+    filterStatus.addEventListener('change', () => {
+        historyFilters.status = filterStatus.value;
+        historyFilters.page = 1;
+        fetchTransactionHistory();
+    });
+}
 
-filterStatus.addEventListener('change', () => {
-    historyFilters.status = filterStatus.value;
-    historyFilters.page = 1;
-    fetchTransactionHistory();
-});
+if (filterFromDate) {
+    filterFromDate.addEventListener('change', () => {
+        historyFilters.from = filterFromDate.value;
+        historyFilters.page = 1;
+        fetchTransactionHistory();
+    });
+}
 
-filterFromDate.addEventListener('change', () => {
-    historyFilters.from = filterFromDate.value;
-    historyFilters.page = 1;
-    fetchTransactionHistory();
-});
+if (filterToDate) {
+    filterToDate.addEventListener('change', () => {
+        historyFilters.to = filterToDate.value;
+        historyFilters.page = 1;
+        fetchTransactionHistory();
+    });
+}
 
-filterToDate.addEventListener('change', () => {
-    historyFilters.to = filterToDate.value;
-    historyFilters.page = 1;
-    fetchTransactionHistory();
-});
-
-clearFiltersBtn.addEventListener('click', () => {
-    searchDescInput.value = '';
-    filterType.value = '';
-    filterStatus.value = '';
-    filterFromDate.value = '';
-    filterToDate.value = '';
-    
-    historyFilters = { page: 1, limit: 10, type: '', status: '', from: '', to: '', search: '' };
-    fetchTransactionHistory();
-});
+if (clearFiltersBtn) {
+    clearFiltersBtn.addEventListener('click', () => {
+        if (searchDescInput) searchDescInput.value = '';
+        if (filterType) filterType.value = '';
+        if (filterStatus) filterStatus.value = '';
+        if (filterFromDate) filterFromDate.value = '';
+        if (filterToDate) filterToDate.value = '';
+        
+        historyFilters = { page: 1, limit: 10, type: '', status: '', from: '', to: '', search: '' };
+        fetchTransactionHistory();
+    });
+}
 
 // Pagination events
-prevPageBtn.addEventListener('click', () => {
-    if (historyPagination.hasPrevPage) {
-        historyFilters.page--;
-        fetchTransactionHistory();
-    }
-});
+if (prevPageBtn) {
+    prevPageBtn.addEventListener('click', () => {
+        if (historyPagination.hasPrevPage) {
+            historyFilters.page--;
+            fetchTransactionHistory();
+        }
+    });
+}
 
-nextPageBtn.addEventListener('click', () => {
-    if (historyPagination.hasNextPage) {
-        historyFilters.page++;
-        fetchTransactionHistory();
-    }
-});
+if (nextPageBtn) {
+    nextPageBtn.addEventListener('click', () => {
+        if (historyPagination.hasNextPage) {
+            historyFilters.page++;
+            fetchTransactionHistory();
+        }
+    });
+}
 
 // CSV Export and Modal events
-exportCsvBtn.addEventListener('click', handleExportCsv);
-closeTxModalBtn.addEventListener('click', closeTxDetails);
+if (exportCsvBtn) exportCsvBtn.addEventListener('click', handleExportCsv);
+if (closeTxModalBtn) closeTxModalBtn.addEventListener('click', closeTxDetails);
 
-txDetailsModal.addEventListener('click', (e) => {
-    if (e.target === txDetailsModal) {
-        closeTxDetails();
-    }
-});
+if (txDetailsModal) {
+    txDetailsModal.addEventListener('click', (e) => {
+        if (e.target === txDetailsModal) {
+            closeTxDetails();
+        }
+    });
+}
 
 // Boot the application
 checkSession();

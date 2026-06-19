@@ -1,5 +1,5 @@
 // Global authentication check for protected dashboard pages
-const BACKEND_BASE = window.location.hostname === 'localhost' && window.location.port !== '5055' ? 'http://localhost:5055' : '';
+const BACKEND_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '5055' ? 'http://localhost:5055' : '';
 
 function getAuthHeaders(headers = {}) {
     const token = localStorage.getItem('token');

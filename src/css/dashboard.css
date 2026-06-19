@@ -28,9 +28,11 @@ a {
     padding: 24px;
     color: #ffffff;
     background: linear-gradient(180deg, #1b3a6a, #12284c);
+    display: flex;
+    flex-direction: column;
 }
 
-.logo {
+.sidebar .logo {
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -51,16 +53,39 @@ a {
 }
 
 .side-nav {
-    display: grid;
-    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.nav-section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 15px 0 5px 12px;
+    font-weight: 700;
 }
 
 .side-nav a {
-    padding: 13px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
     border-radius: 8px;
     color: #eef4ff;
-    font-weight: 700;
-    transition: background 0.3s ease, transform 0.3s ease;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.side-nav a svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    stroke: currentColor;
+    stroke-width: 2;
 }
 
 .side-nav a:hover,
@@ -68,6 +93,84 @@ a {
     color: #ffffff;
     background: rgba(255, 255, 255, 0.16);
     transform: translateX(4px);
+}
+
+.sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 16px;
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.user-profile-widget {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #ffffff;
+    flex-shrink: 0;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.user-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.user-email {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.logout-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.logout-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 2;
 }
 
 .dashboard-main {

@@ -1,4 +1,4 @@
-const BACKEND_BASE = window.location.hostname === 'localhost' && window.location.port !== '5055' ? 'http://localhost:5055' : '';
+const BACKEND_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '5055' ? 'http://localhost:5055' : '';
 const menuButton = document.getElementById("menuButton");
 const sidebar = document.getElementById("sidebar");
 const profileForm = document.getElementById("profileForm");
