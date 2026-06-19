@@ -1,5 +1,17 @@
 {
+  "version": 2,
   "cleanUrls": true,
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "src/css/*", "use": "@vercel/static" },
+    { "src": "src/html/*", "use": "@vercel/static" },
+    { "src": "src/js/*", "use": "@vercel/static" },
+    { "src": "public/*", "use": "@vercel/static" },
+    { "src": "Admin/index.html", "use": "@vercel/static" },
+    { "src": "Admin/src/css/*", "use": "@vercel/static" },
+    { "src": "Admin/src/html/*", "use": "@vercel/static" },
+    { "src": "Admin/src/js/*", "use": "@vercel/static" }
+  ],
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
     { "source": "/about", "destination": "/src/html/about.html" },
