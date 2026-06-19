@@ -1,5 +1,5 @@
 // --- Base API Configuration ---
-const BACKEND_BASE = window.location.port === '5055' ? '' : 'http://localhost:5055';
+const BACKEND_BASE = window.location.hostname === 'localhost' && window.location.port !== '5055' ? 'http://localhost:5055' : '';
 const API_URL = `${BACKEND_BASE}/api/wallet`;
 const AUTH_API_URL = `${BACKEND_BASE}/api/auth`;
 const TX_API_URL = `${BACKEND_BASE}/api/transaction`;

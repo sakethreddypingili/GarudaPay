@@ -16,6 +16,20 @@ const path = require("path");
 
 const app = express();
 
+// Database connection middleware for serverless compatibility
+const mongoose = require("mongoose");
+app.use(async (req, res, next) => {
+    if (mongoose.connection.readyState === 0) {
+        try {
+            await connectDB();
+        } catch (err) {
+            console.error("DB connection error in middleware:", err);
+            return next(err);
+        }
+    }
+    next();
+});
+
 const cors = require("cors");
 app.use(cors({ origin: true, credentials: true }));
 
@@ -69,23 +83,22 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5055;
 
-// As this function will return a Promise. we will use async and await
-async function start() {
-    try {
-        // We are using await here because connectDB() method will return a promise wo we need to wait until promise resolves
-        await connectDB();
-        console.log("Mongoose connected successfully");
+// Only listen and connect directly when running locally (not in serverless environments)
+if (!process.env.VERCEL) {
+    async function start() {
+        try {
+            await connectDB();
+            console.log("Mongoose connected successfully");
 
-        app.listen(PORT, () => {
-            // listen starts accepting request on PORT = process.env.PORT || 5055;
-            // this callback function runs when app is listenting to PORT
-            console.log(`Server is listening on http://localhost:${PORT}`);
-        })
-    } catch (e) {
-        // If Promise of the connectDB() method rejects that error is catched here.
-        console.error(e.message); // Prints the error message
-        process.exit(1); // If the db is not connected then node process is stopped
+            app.listen(PORT, () => {
+                console.log(`Server is listening on http://localhost:${PORT}`);
+            });
+        } catch (e) {
+            console.error("Local start error:", e.message);
+            process.exit(1);
+        }
     }
+    start();
 }
 
-start();
+module.exports = app;
