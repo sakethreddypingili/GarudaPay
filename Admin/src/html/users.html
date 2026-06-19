@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management | GarudaPay Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/admin/src/css/style.css">
+    <style>
+        .sidebar-nav {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+        .sidebar-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .sidebar-nav a.active {
+            color: var(--brand-primary);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+        th {
+            background-color: #f8fafc;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        tr:last-child td {
+            border-bottom: transparent;
+        }
+        .action-input {
+            width: 90px;
+            padding: 6px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .action-btn {
+            padding: 6px 12px;
+            background: var(--brand-primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo"><a href="/" style="color: var(--brand-primary); text-decoration: none;">GarudaPay Admin</a></div>
+        <div>
+            <button class="nav-btn" onclick="window.location.href='/'">Main Site</button>
+        </div>
+    </header>
+
+    <div class="container" style="margin-top: 40px;">
+        <div class="sidebar-nav">
+            <a href="/admin/src/html/dashboard.html">Stats Overview</a>
+            <a href="/admin/src/html/users.html" class="active">User Management</a>
+        </div>
+
+        <h2>User Accounts Management</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Balance</th>
+                    <th>Adjust Balance</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody">
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-secondary);">Loading accounts...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function loadUsers() {
+            try {
+                const res = await fetch("/api/admin/users");
+                if (res.status === 401 || res.status === 403) {
+                    alert("Access denied.");
+                    window.location.href = "../../index.html";
+                    return;
+                }
+                const data = await res.json();
+                if (data.success) {
+                    const tbody = document.getElementById("usersTableBody");
+                    tbody.innerHTML = "";
+                    
+                    if (data.users.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No standard users registered yet.</td></tr>`;
+                        return;
+                    }
+
+                    data.users.forEach(user => {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td><code>${user._id}</code></td>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td><strong>₹${(user.balance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</strong></td>
+                            <td>
+                                <input type="number" class="action-input" id="bal-${user._id}" value="${user.balance || 0}">
+                                <button class="action-btn" onclick="updateBalance('${user._id}')">Save</button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function updateBalance(userId) {
+            const val = document.getElementById(`bal-${userId}`).value;
+            if (val === "" || isNaN(val) || parseFloat(val) < 0) {
+                alert("Please enter a valid positive number.");
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/admin/users/${userId}/balance`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ balance: parseFloat(val) })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert("User balance updated successfully.");
+                    loadUsers();
+                } else {
+                    alert("Error updating balance: " + data.message);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("An error occurred while updating user balance.");
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", loadUsers);
+    </script>
+</body>
+</html>

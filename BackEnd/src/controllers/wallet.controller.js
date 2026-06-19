@@ -168,6 +168,7 @@ exports.transferWallet = async (req, res) => {
 
         res.status(201).json({
             success: true,
+            data: newTx,
             transaction: {
                 transactionId: ref,
                 title: newTx.description,

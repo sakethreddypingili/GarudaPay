@@ -2,8 +2,12 @@ const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
     try {
-        // reads token from cookies.
-        const token = req.cookies.token;
+        // reads token from cookies or authorization header
+        let token = req.cookies.token;
+
+        if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+            token = req.headers.authorization.split(" ")[1];
+        }
 
         // if there is no token, it rejects the request
         if (!token) {
@@ -32,7 +36,10 @@ const verifyToken = (req, res, next) => {
 
 const optionalVerifyToken = (req, res, next) => {
     try {
-        const token = req.cookies.token;
+        let token = req.cookies.token;
+        if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+            token = req.headers.authorization.split(" ")[1];
+        }
         if (token) {
             const decoded = jwt.verify(token, process.env.JWT_SECRET || "garudapay_secret_key_123");
             req.user = decoded;
