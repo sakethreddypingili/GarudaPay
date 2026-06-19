@@ -47,7 +47,7 @@ app.use("/api/admin", adminRoutes);
 
 // Root route serves landing page
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../../FrontEnd/index.html"));
+    res.sendFile(path.join(__dirname, "../../index.html"));
 });
 
 // Serve Admin static files
@@ -55,8 +55,8 @@ app.use("/admin", express.static(path.join(__dirname, "../../Admin")));
 app.use("/Admin", express.static(path.join(__dirname, "../../Admin")));
 
 // Serve FrontEnd static files
-app.use(express.static(path.join(__dirname, "../../FrontEnd")));
-app.use(express.static(path.join(__dirname, "../../FrontEnd/src")));
+app.use(express.static(path.join(__dirname, "../..")));
+app.use(express.static(path.join(__dirname, "../../src")));
 
 // If any routes does not matches as per the request then this will run
 app.use((req, res) => {
@@ -66,7 +66,7 @@ app.use((req, res) => {
             message: `Route ${req.method} ${req.path} not found`
         });
     }
-    res.status(404).sendFile(path.join(__dirname, "../../FrontEnd/404.html"));
+    res.status(404).sendFile(path.join(__dirname, "../../src/html/404.html"));
 });
 
 // Error handling middleware
@@ -78,7 +78,7 @@ app.use((err, req, res, next) => {
             message: err.message || "Internal Server Error"
         });
     }
-    res.status(500).sendFile(path.join(__dirname, "../../FrontEnd/error.html"));
+    res.status(500).sendFile(path.join(__dirname, "../../src/html/error.html"));
 });
 
 const PORT = process.env.PORT || 5055;
