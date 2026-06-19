@@ -18,7 +18,7 @@ async function checkAuthAndLoadPreferences() {
         });
         if (!response.ok) {
             // Not authenticated, redirect to login page
-            window.location.href = "../../index.html";
+            window.location.href = "/index.html";
             return null;
         }
         
@@ -41,7 +41,7 @@ async function checkAuthAndLoadPreferences() {
         return user;
     } catch (error) {
         console.error("Auth check failed:", error);
-        window.location.href = "../../index.html";
+        window.location.href = "/index.html";
         return null;
     }
 }
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.error("Logout error:", err);
                 }
                 localStorage.removeItem('token');
-                window.location.href = "../../index.html";
+                window.location.href = "/index.html";
             });
         }
     });

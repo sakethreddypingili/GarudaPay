@@ -348,7 +348,7 @@ async function handleLogin(e) {
             if (data.token) localStorage.setItem('token', data.token);
             currentUser = data.user;
             updateNavbar();
-            window.location.href = "dashboard.html";
+            window.location.href = "/src/html/dashboard.html";
         } else {
             alert(data.message || 'Login failed.');
         }
@@ -377,7 +377,7 @@ async function handleRegister(e) {
             if (data.token) localStorage.setItem('token', data.token);
             currentUser = data.user;
             updateNavbar();
-            window.location.href = "dashboard.html";
+            window.location.href = "/src/html/dashboard.html";
         } else {
             alert(data.message || 'Registration failed.');
         }
