@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garuda Pay Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar" id="sidebar">
+            <a href="/index.html" class="logo">
+                <span class="logo-icon">G</span>
+                <span>Garuda Pay</span>
+            </a>
+
+            <nav class="side-nav">
+                <a href="/src/html/dashboard.html" class="active">Overview</a>
+                <a href="/src/html/profile.html">Profile & Security</a>
+                <a href="/src/html/app.html#topup">Wallet & Top-up</a>
+                <a href="/src/html/app.html#send">Send Money</a>
+                <a href="/src/html/app.html#transactions">Transactions</a>
+                <a href="/src/html/notifications.html">Notifications</a>
+                <a href="/src/html/settings.html">Preferences</a>
+                <a href="/src/html/contact.html">Help & Support</a>
+                <a href="/index.html">Logout</a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="topbar">
+                <button class="menu-button" id="menuButton" aria-label="Open sidebar">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div>
+                    <p class="section-label">Dashboard</p>
+                    <h1>Welcome,</h1>
+                </div>
+                <a href="/src/html/notifications.html" class="notification-link">Notifications</a>
+            </header>
+
+            <section class="stats-grid" id="statsGrid">
+                <article class="stat-card">
+                    <p>Wallet Balance</p>
+                    <h2 id="walletBalance">₹0</h2>
+                </article>
+                <article class="stat-card">
+                    <p>Total Sent</p>
+                    <h2 id="totalSent">₹0</h2>
+                </article>
+                <article class="stat-card">
+                    <p>Total Received</p>
+                    <h2 id="totalReceived">₹0</h2>
+                </article>
+                <article class="stat-card">
+                    <p>Total Transactions</p>
+                    <h2 id="totalTransactions">0</h2>
+                </article>
+            </section>
+
+            <section class="quick-actions">
+                <button onclick="window.location.href='/src/html/app.html'">Add Money</button>
+                <button onclick="window.location.href='/src/html/app.html'">Send Money</button>
+                <button onclick="window.location.href='/src/html/app.html'">View History</button>
+            </section>
+
+            <section class="content-grid">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Recent Transactions</h2>
+                        <a href="/src/html/app.html">View all</a>
+                    </div>
+                    <div class="transaction-list" id="transactionList">
+                        <p class="empty-text">Loading transactions...</p>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Recent Activity</h2>
+                        <a href="/src/html/notifications.html">Alerts</a>
+                    </div>
+                    <div class="activity-list" id="activityList">
+                        <p class="empty-text">Loading activity...</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/auth-check.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>

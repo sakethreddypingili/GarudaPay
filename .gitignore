@@ -1,6 +1,17 @@
-# Ignore everything
-*
-
-# Allow tracking of index.html and .gitignore
-!index.html
-!.gitignore
+node_modules/
+.DS_Store
+.env
+.txt
+.vscode
+.vscode/extensions.
+json
+.vscode/launch.json
+.agents
+.vscode/settings.json
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+**/.env
+.postman/
+postman/

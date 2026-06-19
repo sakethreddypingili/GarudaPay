@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garuda Pay Profile</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <style>
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-card {
+            background: var(--card-bg, #ffffff);
+            border: 1px solid var(--border-color, #e2e8f0);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+        .form-card h2 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #1b3a6a;
+            border-bottom: 2px solid #f0f4f8;
+            padding-bottom: 8px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748B;
+            margin-bottom: 6px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #1b3a6a;
+            box-shadow: 0 0 0 3px rgba(27, 58, 106, 0.1);
+        }
+        .btn-submit {
+            background: #1b3a6a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-submit:hover {
+            background: #12284c;
+            transform: translateY(-1px);
+        }
+        .status-msg {
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .status-success { color: #10B981; }
+        .status-error { color: #EF4444; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar" id="sidebar">
+            <a href="/index.html" class="logo">
+                <span class="logo-icon">G</span>
+                <span>Garuda Pay</span>
+            </a>
+
+            <nav class="side-nav">
+                <a href="/src/html/dashboard.html">Overview</a>
+                <a href="/src/html/profile.html" class="active">Profile & Security</a>
+                <a href="/src/html/app.html#topup">Wallet & Top-up</a>
+                <a href="/src/html/app.html#send">Send Money</a>
+                <a href="/src/html/app.html#transactions">Transactions</a>
+                <a href="/src/html/notifications.html">Notifications</a>
+                <a href="/src/html/settings.html">Preferences</a>
+                <a href="/src/html/contact.html">Help & Support</a>
+                <a href="/index.html">Logout</a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="topbar">
+                <button class="menu-button" id="menuButton" aria-label="Open sidebar">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div>
+                    <p class="section-label">User Profile</p>
+                    <h1>My Profile</h1>
+                </div>
+                <a href="/src/html/dashboard.html" class="notification-link">Dashboard</a>
+            </header>
+
+            <section class="profile-container">
+                <!-- Profile details form -->
+                <div class="form-card">
+                    <h2>Edit Profile Details</h2>
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="profileName">Full Name</label>
+                            <input type="text" id="profileName" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profileEmail">Email Address</label>
+                            <input type="email" id="profileEmail" class="form-input" required>
+                        </div>
+                        <button type="submit" class="btn-submit" id="profileSubmit">Update Details</button>
+                        <p id="profileStatus" class="status-msg"></p>
+                    </form>
+                </div>
+
+                <!-- Password change form -->
+                <div class="form-card">
+                    <h2>Change Password</h2>
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" class="form-input" placeholder="Must be at least 6 characters" minlength="6" required>
+                        </div>
+                        <button type="submit" class="btn-submit" id="passwordSubmit">Change Password</button>
+                        <p id="passwordStatus" class="status-msg"></p>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/auth-check.js"></script>
+    <script src="../js/profile.js"></script>
+</body>
+</html>

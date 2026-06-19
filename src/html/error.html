@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error | GarudaPay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/css/style.css">
+    <style>
+        .error-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .error-code {
+            font-size: 120px;
+            font-weight: 800;
+            color: #ef4444;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+        .error-desc {
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin-bottom: 32px;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">500</div>
+        <div class="error-message">Internal Server Error.</div>
+        <div class="error-desc">
+            Something went wrong on our servers. Please try again later or contact support if the issue persists.
+        </div>
+        <a href="/" class="nav-btn" style="background: var(--brand-primary); color: white; text-decoration: none; padding: 12px 32px;">Back to Home</a>
+    </div>
+</body>
+</html>
