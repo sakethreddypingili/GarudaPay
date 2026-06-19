@@ -1,21 +1,9 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "BackEnd/src/server.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "FrontEnd/**",
-          "Admin/**"
-        ]
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "BackEnd/src/server.js"
-    }
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/FrontEnd/index.html" },
+    { "source": "/admin/(.*)", "destination": "/Admin/$1" },
+    { "source": "/Admin/(.*)", "destination": "/Admin/$1" },
+    { "source": "/(.*)", "destination": "/FrontEnd/$1" }
   ]
 }
