@@ -10,94 +10,436 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/dashboard.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Scoped override styles to fix guest layout UI conflicts with dashboard.css */
+        #guestAuthContainer {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #f4f7fc;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        #guestAuthContainer header {
+            position: static;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 5%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid #e2e8f0;
+            z-index: 10;
+        }
+
+        #guestAuthContainer header .logo {
+            font-size: 22px;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            color: #1b3a6a !important;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0 !important;
+            gap: 8px;
+        }
+
+        #guestAuthContainer header .logo svg {
+            color: #1b3a6a;
+        }
+
+        #guestAuthContainer .nav-links a {
+            color: #64748b;
+            text-decoration: none;
+            margin-left: 32px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+
+        #guestAuthContainer .nav-links a:hover {
+            color: #333333;
+        }
+
+        #guestAuthContainer .guest-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        #guestAuthContainer .guest-card-wrapper {
+            width: 100%;
+            max-width: 440px;
+        }
+
+        #guestAuthContainer .view {
+            display: none;
+        }
+
+        #guestAuthContainer .view.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #guestAuthContainer .card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 36px;
+            box-shadow: 0 10px 25px -5px rgba(27, 58, 106, 0.08);
+        }
+
+        #guestAuthContainer h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1b3a6a;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+        }
+
+        #guestAuthContainer .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: left;
+        }
+
+        #guestAuthContainer .form-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #guestAuthContainer .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        #guestAuthContainer .form-input:focus {
+            border-color: #1b3a6a;
+            box-shadow: 0 0 0 3px rgba(27, 58, 106, 0.1);
+        }
+
+        #guestAuthContainer .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: #1b3a6a;
+            color: white !important;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        #guestAuthContainer .btn-submit:hover {
+            background-color: #12284c;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(27, 58, 106, 0.2);
+        }
+
+        #guestAuthContainer footer {
+            padding: 40px 10%;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        #guestAuthContainer .footer-logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            color: #1b3a6a;
+            text-decoration: none;
+        }
+
+        #guestAuthContainer .footer-text {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-top: 12px;
+            max-width: 300px;
+            text-align: left;
+        }
+
+        #guestAuthContainer .footer-links a {
+            color: #64748b;
+            text-decoration: none;
+            margin-left: 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        #guestAuthContainer .footer-links a:hover {
+            color: #1b3a6a;
+        }
+
+        /* Account context menu styling inside sidebar footer */
+        .account-dropdown {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            left: 10px;
+            right: 10px;
+            background: #1e3a8a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            z-index: 50;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .account-dropdown.show {
+            display: flex;
+            animation: slideUp 0.2s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .account-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            color: #eef4ff;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .account-dropdown a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .account-dropdown a svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 2;
+        }
+
+        @media (max-width: 900px) {
+            #guestAuthContainer header .nav-links {
+                display: none;
+            }
+            #guestAuthContainer footer {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            #guestAuthContainer .footer-text {
+                text-align: center;
+            }
+            #guestAuthContainer .footer-links a {
+                margin: 0 12px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- GUEST AUTH CONTAINER -->
-    <div class="container" id="guestAuthContainer" style="display: none; max-width: 450px; margin: 80px auto;">
-        <div style="text-align: center; margin-bottom: 30px;">
-            <a href="/" class="logo" style="text-decoration: none; font-size: 32px; font-weight: 800;">GarudaPay</a>
-        </div>
-        <!-- LOGIN VIEW -->
-        <div id="loginView" class="view">
-            <div class="card">
-                <h3>Welcome Back</h3>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label class="form-label" for="loginEmail">Email</label>
-                        <input type="email" id="loginEmail" class="form-input" required autocomplete="username">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="loginPassword">Password</label>
-                        <input type="password" id="loginPassword" class="form-input" required autocomplete="current-password">
-                    </div>
-                    <button type="submit" class="nav-btn" style="width: 100%; padding: 12px; margin-left: 0; background-color: var(--brand-primary); color: white;">Sign In</button>
-                </form>
-                <div style="margin-top: 16px; text-align: center; font-size: 14px;">
-                    <a href="#" id="linkForgotPassword" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Forgot Password?</a>
-                </div>
-                <div style="margin-top: 12px; text-align: center; font-size: 14px; color: var(--text-secondary);">
-                    Don't have an account? <a href="#" id="linkRegister" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Register here</a>
-                </div>
+    <!-- GUEST AUTH CONTAINER (Header, Forms, Footer) -->
+    <div id="guestAuthContainer" style="display: none;">
+        <!-- Nav Header -->
+        <header>
+            <a href="/" class="logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                GarudaPay
+            </a>
+            <div class="nav-links">
+                <a href="/#security">Security</a>
+                <a href="/#features">Features</a>
+                <a href="/#pricing">Pricing</a>
+                <a href="/#about">About Us</a>
+                <a href="/#contact">Support</a>
             </div>
-        </div>
-        <!-- Other guest views (register, etc.) -->
+        </header>
+
+        <!-- Main Form Container -->
+        <main class="guest-main">
+            <div class="guest-card-wrapper">
+                
+                <!-- 1. LOGIN VIEW -->
+                <div id="loginView" class="view">
+                    <div class="card">
+                        <h3>Welcome Back</h3>
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <label class="form-label" for="loginEmail">Email</label>
+                                <input type="email" id="loginEmail" class="form-input" required autocomplete="username">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="loginPassword">Password</label>
+                                <input type="password" id="loginPassword" class="form-input" required autocomplete="current-password">
+                            </div>
+                            <button type="submit" class="btn-submit">Sign In</button>
+                        </form>
+                        <div style="margin-top: 20px; text-align: center; font-size: 14px;">
+                            <a href="#" id="linkForgotPassword" style="color: #1b3a6a; text-decoration: none; font-weight: 600;">Forgot Password?</a>
+                        </div>
+                        <div style="margin-top: 12px; text-align: center; font-size: 14px; color: #64748b;">
+                            Don't have an account? <a href="#" id="linkRegister" style="color: #1b3a6a; text-decoration: none; font-weight: 600;">Register here</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. REGISTER VIEW -->
+                <div id="registerView" class="view">
+                    <div class="card">
+                        <h3>Create Account</h3>
+                        <form id="registerForm">
+                            <div class="form-group">
+                                <label class="form-label" for="registerName">Full Name</label>
+                                <input type="text" id="registerName" class="form-input" required autocomplete="name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="registerEmail">Email Address</label>
+                                <input type="email" id="registerEmail" class="form-input" required autocomplete="username">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="registerPassword">Password</label>
+                                <input type="password" id="registerPassword" class="form-input" required autocomplete="new-password">
+                            </div>
+                            <button type="submit" class="btn-submit">Register</button>
+                        </form>
+                        <div style="margin-top: 20px; text-align: center; font-size: 14px; color: #64748b;">
+                            Already have an account? <a href="#" id="linkLogin" style="color: #1b3a6a; text-decoration: none; font-weight: 600;">Sign In here</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. FORGOT PASSWORD VIEW -->
+                <div id="forgotPasswordView" class="view">
+                    <div class="card">
+                        <h3>Reset Password</h3>
+                        <form id="forgotPasswordForm">
+                            <div class="form-group">
+                                <label class="form-label" for="forgotEmail">Email Address</label>
+                                <input type="email" id="forgotEmail" class="form-input" required>
+                            </div>
+                            <button type="submit" class="btn-submit">Send Reset Link</button>
+                        </form>
+                        
+                        <!-- Forgot Password Debug Link for local testing -->
+                        <div id="forgotPasswordDebugContainer" style="display: none; margin-top: 16px; padding: 12px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; font-size: 13px;">
+                            <span style="color: #065f46; font-weight: 600;">Debug link:</span> <a href="#" id="forgotPasswordDebugLink" style="color: #047857; text-decoration: underline;">Click here to reset</a>
+                        </div>
+
+                        <div style="margin-top: 20px; text-align: center; font-size: 14px;">
+                            <a href="#" id="linkBackToLogin1" style="color: #1b3a6a; text-decoration: none; font-weight: 600;">Back to Login</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. RESET PASSWORD VIEW -->
+                <div id="resetPasswordView" class="view">
+                    <div class="card">
+                        <h3>New Password</h3>
+                        <form id="resetPasswordForm">
+                            <input type="hidden" id="resetToken">
+                            <div class="form-group">
+                                <label class="form-label" for="resetPassword">New Password</label>
+                                <input type="password" id="resetPassword" class="form-input" required autocomplete="new-password">
+                            </div>
+                            <button type="submit" class="btn-submit">Update Password</button>
+                        </form>
+                        <div style="margin-top: 20px; text-align: center; font-size: 14px;">
+                            <a href="#" id="linkBackToLogin2" style="color: #1b3a6a; text-decoration: none; font-weight: 600;">Back to Login</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <div>
+                <a href="/" class="footer-logo">GarudaPay</a>
+                <p class="footer-text">Building the financial infrastructure for tomorrow's digital economy. Secure, fast, and remarkably simple.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/#about">About Us</a>
+                <a href="/#contact">Contact Support</a>
+            </div>
+        </footer>
     </div>
 
     <!-- AUTHENTICATED DASHBOARD LAYOUT -->
     <div class="dashboard-layout" id="appDashboardLayout" style="display: none;">
         
-        <!-- Refactored Sidebar -->
+        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <a href="/" class="logo" style="font-size: 24px;">GarudaPay</a>
             </div>
             
             <nav class="side-nav">
-                <span class="nav-section-title">Wallet</span>
                 <a href="#dashboard" id="sideNavDashboard" class="side-nav-link active">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <i data-lucide="layout-dashboard"></i>
                     <span>Overview</span>
                 </a>
                 <a href="#send" id="sideNavSend" class="side-nav-link">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                    <i data-lucide="arrow-left-right"></i>
                     <span>Send & Request</span>
                 </a>
                 <a href="#topup" id="sideNavTopUp" class="side-nav-link">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m-15.357-2a8.001 8.001 0 0115.357-2m0 0H15"/></svg>
+                    <i data-lucide="wallet"></i>
                     <span>Add Money</span>
                 </a>
                 <a href="#transactions" id="sideNavHistory" class="side-nav-link">
-                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                     <i data-lucide="clock"></i>
                     <span>History</span>
-                </a>
-
-                <span class="nav-section-title">Account</span>
-                <a href="profile.html" class="side-nav-link">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                    <span>Profile</span>
-                </a>
-                 <a href="notifications.html" class="side-nav-link">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                    <span>Notifications</span>
-                </a>
-                <a href="settings.html" class="side-nav-link">
-                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    <span>Settings</span>
                 </a>
             </nav>
 
-            <div class="sidebar-footer">
-                <div class="user-profile-widget">
+            <div class="sidebar-footer" style="position: relative;">
+                <div class="user-profile-widget" id="userProfileBtn" style="cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%;">
                     <div class="user-avatar" id="sidebarAvatar"></div>
-                    <div class="user-info">
+                    <div class="user-info" style="flex: 1; text-align: left;">
                         <span class="user-name" id="sidebarUserName">User</span>
                         <span class="user-email" id="sidebarUserEmail">user@email.com</span>
                     </div>
+                    <i data-lucide="chevron-up" style="color: rgba(255, 255, 255, 0.6); width: 16px; height: 16px;"></i>
                 </div>
-                <button class="logout-btn" id="sideNavLogout">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                </button>
+                
+                <!-- Account options context dropdown -->
+                <div class="account-dropdown" id="accountDropdown">
+                    <a href="profile.html"><i data-lucide="user"></i>Profile</a>
+                    <a href="notifications.html"><i data-lucide="bell"></i>Notifications</a>
+                    <a href="settings.html"><i data-lucide="settings"></i>Settings</a>
+                    <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 6px 0;">
+                    <a href="#" id="sideNavLogout" style="color: #f87171;"><i data-lucide="log-out"></i>Logout</a>
+                </div>
             </div>
         </aside>
 
@@ -109,12 +451,11 @@
                 </button>
                 <h1 id="appDashboardTitle" class="topbar-title">Overview</h1>
                 <a href="notifications.html" class="notification-link">
-                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                     <i data-lucide="bell"></i>
                 </a>
             </header>
 
             <div class="app-views-container">
-                <!-- All SPA views will be dynamically displayed here -->
                 <!-- 1. WALLET DASHBOARD VIEW -->
                 <div id="dashboardView" class="view">
                     <!-- Balance Card -->
@@ -129,7 +470,6 @@
                         <div id="transactionsList"></div>
                     </div>
                 </div>
-                <!-- Other views (topup, send, history) -->
             </div>
         </main>
     </div>
@@ -140,5 +480,28 @@
     </div>
 
     <script src="../js/app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const userProfileBtn = document.getElementById("userProfileBtn");
+            const accountDropdown = document.getElementById("accountDropdown");
+            
+            if (userProfileBtn && accountDropdown) {
+                userProfileBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    accountDropdown.classList.toggle("show");
+                });
+                
+                document.addEventListener("click", (e) => {
+                    if (!accountDropdown.contains(e.target) && !userProfileBtn.contains(e.target)) {
+                        accountDropdown.classList.remove("show");
+                    }
+                });
+            }
+            
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        });
+    </script>
 </body>
 </html>
